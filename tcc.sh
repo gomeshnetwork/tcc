@@ -1,0 +1,1 @@
+go build  -o ./.build/tcc ./cmd/tcc && ./.build/tcc "$@" && rm ./.build/tcc

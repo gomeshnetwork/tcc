@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package tcc;
+
+option go_package = "github.com/gomeshnetwork/tcc";
+
+enum TxStatus {
+  Created = 0;
+  Confirmed = 1;
+  Canceled = 2;
+  Timeout = 3;
+}
+
+message NewTxRequest {
+  string txid = 1; // parent txid
+}
+
+message NewTxResponse {
+  string txid = 2; // root txid or child txid
+}
+
+message CommitTxRequest {
+  string txid = 1; // txid
+}
+
+message CommitTxResponse {}
+
+message CancelTxRequest {
+  string txid = 1; //  txid
+}
+
+message CancelTxResponse {}
+
+message BeforeRequireRequest {
+  string txid = 1;
+  string agent = 2;
+  string resource = 3;
+  string key = 4;
+}
+
+message BeforeRequireRespose {}
+
+message AfterRequireRequest {
+  string txid = 1;
+  string agent = 2;
+  string resource = 3;
+  string key = 4;
+}
+
+message AfterRequireRespose {}
+
+enum AgentCommand {
+  COMMMIT = 0;
+  Cancel = 1;
+}
+
+message AgentCommandRequest {
+  string txid = 1;
+  string resource = 2;
+  AgentCommand command = 3;
+}
+
+message AttachAgentRequest { string agent = 1; }
+
+service Engine {
+  rpc NewTx(NewTxRequest) returns (NewTxResponse);
+  rpc Commit(CommitTxRequest) returns (CommitTxResponse);
+  rpc Cancel(CancelTxRequest) returns (CancelTxResponse);
+  rpc BeforeRequire(BeforeRequireRequest) returns (BeforeRequireRespose);
+  rpc AfterRequire(AfterRequireRequest) returns (AfterRequireRespose);
+  rpc AttachAgent(AttachAgentRequest) returns (stream AgentCommandRequest);
+}
