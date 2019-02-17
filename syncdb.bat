@@ -1,0 +1,1 @@
+go build  -o .\.build\syncdb.exe .\cmd\syncdb && .\.build\syncdb  %*

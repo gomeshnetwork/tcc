@@ -35,3 +35,7 @@ type Resource struct {
 func (table *Resource) TableName() string {
 	return "tcc_engine_resource"
 }
+
+type Storage interface {
+	NewTx(tx *Transaction) error
+}

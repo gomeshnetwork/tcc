@@ -1,0 +1,1 @@
+go build  -o .\.build\tcc.exe .\cmd\tcc && .\.build\tcc  %*
