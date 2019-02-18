@@ -35,3 +35,7 @@ type Resource struct {
 func (table *Resource) TableName() string {
 	return "tcc_engine_resource"
 }
+
+// Storage the tcc engine storage service layer
+type Storage interface {
+}

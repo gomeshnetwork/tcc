@@ -3,6 +3,9 @@ package scheduler
 import (
 	"context"
 
+	"github.com/bwmarrin/snowflake"
+	"github.com/gomeshnetwork/tcc/engine"
+
 	"github.com/dynamicgo/slf4go"
 
 	config "github.com/dynamicgo/go-config"
@@ -12,6 +15,8 @@ import (
 
 type schedulerImpl struct {
 	slf4go.Logger
+	Storage engine.Storage  `inject:"tcc.Storage"`   // inject storage service
+	Snode   *snowflake.Node `inject:"tcc.Snowflake"` // inject snowflake node
 }
 
 // New .
