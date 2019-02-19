@@ -36,6 +36,8 @@ func (table *Resource) TableName() string {
 	return "tcc_engine_resource"
 }
 
-// Storage the tcc engine storage service layer
+// Storage .
 type Storage interface {
+	NewTx(tx *Transaction) error
+	CommitTx(id string) error
 }

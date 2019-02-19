@@ -15,8 +15,8 @@ import (
 
 type schedulerImpl struct {
 	slf4go.Logger
+	SNode   *snowflake.Node `inject:"tcc.Snowflake"` // inject snowflake node
 	Storage engine.Storage  `inject:"tcc.Storage"`   // inject storage service
-	Snode   *snowflake.Node `inject:"tcc.Snowflake"` // inject snowflake node
 }
 
 // New .
@@ -32,11 +32,25 @@ func (scheduler *schedulerImpl) GrpcHandle(server *grpc.Server) error {
 	return nil
 }
 
-func (scheduler *schedulerImpl) NewTx(context.Context, *tcc.NewTxRequest) (*tcc.NewTxResponse, error) {
-	return nil, nil
+func (scheduler *schedulerImpl) NewTx(ctx context.Context, request *tcc.NewTxRequest) (*tcc.NewTxResponse, error) {
+
+	tx := &engine.Transaction{
+		ID:     scheduler.SNode.Generate().String(),
+		PID:    request.Txid,
+		Status: tcc.TxStatus_Created,
+	}
+
+	if err := scheduler.Storage.NewTx(tx); err != nil {
+		return nil, err
+	}
+
+	return &tcc.NewTxResponse{
+		Txid: tx.ID,
+	}, nil
 }
 
 func (scheduler *schedulerImpl) Commit(context.Context, *tcc.CommitTxRequest) (*tcc.CommitTxResponse, error) {
+
 	return nil, nil
 }
 
