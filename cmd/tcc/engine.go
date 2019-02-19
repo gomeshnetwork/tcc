@@ -7,6 +7,7 @@ import (
 	_ "github.com/gomeshnetwork/agent/basic"
 	"github.com/gomeshnetwork/gomesh"
 	"github.com/gomeshnetwork/gomesh/app"
+	"github.com/gomeshnetwork/tcc/engine/services/notifier"
 	"github.com/gomeshnetwork/tcc/engine/services/scheduler"
 	"github.com/gomeshnetwork/tcc/engine/services/storage"
 	_ "github.com/lib/pq"
@@ -24,6 +25,10 @@ func main() {
 
 	gomesh.LocalService("tcc.Storage", func(config config.Config) (gomesh.Service, error) {
 		return storage.New(config)
+	})
+
+	gomesh.LocalService("tcc.Notifier", func(config config.Config) (gomesh.Service, error) {
+		return notifier.New(config)
 	})
 
 	app.Run("tcc")

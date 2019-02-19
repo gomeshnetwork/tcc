@@ -9,6 +9,7 @@ enum TxStatus {
   Confirmed = 1;
   Canceled = 2;
   Timeout = 3;
+  Locked = 4;
 }
 
 message NewTxRequest {
@@ -31,23 +32,23 @@ message CancelTxRequest {
 
 message CancelTxResponse {}
 
-message BeforeRequireRequest {
+message BeginLockResourceRequest {
   string txid = 1;
-  string agent = 2;
-  string resource = 3;
-  string key = 4;
+  string rid = 2;
+  string agent = 3;
+  string resource = 4;
 }
 
-message BeforeRequireRespose {}
+message BeginLockResourceRespose {}
 
-message AfterRequireRequest {
+message EndLockResourceRequest {
   string txid = 1;
-  string agent = 2;
-  string resource = 3;
-  string key = 4;
+  string rid = 2;
+  string agent = 3;
+  string resource = 4;
 }
 
-message AfterRequireRespose {}
+message EndLockResourceRespose {}
 
 enum AgentCommand {
   COMMMIT = 0;
@@ -62,11 +63,23 @@ message AgentCommandRequest {
 
 message AttachAgentRequest { string agent = 1; }
 
+message ResourceStatusChangedRequest {
+  string txid = 1;
+  string resource = 2;
+  TxStatus status = 3;
+  string agent = 4;
+}
+
+message ResourceStatusChangedRespose {}
+
 service Engine {
   rpc NewTx(NewTxRequest) returns (NewTxResponse);
   rpc Commit(CommitTxRequest) returns (CommitTxResponse);
   rpc Cancel(CancelTxRequest) returns (CancelTxResponse);
-  rpc BeforeRequire(BeforeRequireRequest) returns (BeforeRequireRespose);
-  rpc AfterRequire(AfterRequireRequest) returns (AfterRequireRespose);
+  rpc BeginLockResource(BeginLockResourceRequest)
+      returns (BeginLockResourceRespose);
+  rpc EndLockResource(EndLockResourceRequest) returns (EndLockResourceRespose);
+  rpc ResourceStatusChanged(ResourceStatusChangedRequest)
+      returns (ResourceStatusChangedRespose);
   rpc AttachAgent(AttachAgentRequest) returns (stream AgentCommandRequest);
 }

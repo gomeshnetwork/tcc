@@ -23,9 +23,10 @@ func (table *Transaction) TableName() string {
 // Resource tcc resource status table
 type Resource struct {
 	ID          string       `xorm:"pk"`                       // txid
-	Tx          string       `xorm:"unique(tx_require_agent)"` // resource bind transaction
-	Require     string       `xorm:"unique(tx_require_agent)"` // resource require id
-	Agent       string       `xorm:"unique(tx_require_agent)"` // resource require agent id
+	Tx          string       `xorm:"unique(tx_req_agent_res)"` // resource bind transaction
+	Require     string       `xorm:"unique(tx_req_agent_res)"` // resource require id
+	Agent       string       `xorm:"unique(tx_req_agent_res)"` // resource require agent id
+	Resource    string       `xorm:"unique(tx_req_agent_res)"` // resource require agent id
 	Status      tcc.TxStatus `xorm:"index"`                    // transaction status
 	CreatedTime time.Time    `xorm:"created"`                  // create time
 	UpdatedTime time.Time    `xorm:"updated"`                  // updated time
@@ -39,5 +40,16 @@ func (table *Resource) TableName() string {
 // Storage .
 type Storage interface {
 	NewTx(tx *Transaction) error
-	CommitTx(id string) error
+	UpdateTxStatus(id string, status tcc.TxStatus) (bool, error)
+	NewResource(resource *Resource) error
+	UpdateResourceStatus(txid, agent, resource, rid string, status tcc.TxStatus) error
+	UpdateResourcesStatus(txid, agent, resource string, status tcc.TxStatus) error
+	GetResourceByTx(id string) ([]*Resource, error)
+}
+
+// Notifier .
+type Notifier interface {
+	CommitTx(id string)
+	CancelTx(id string)
+	Register(agent string, server tcc.Engine_AttachAgentServer)
 }

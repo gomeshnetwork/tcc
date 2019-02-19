@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/bwmarrin/snowflake"
 
@@ -25,6 +26,7 @@ type agentImpl struct {
 	engine        tcc.EngineClient               // engine client
 	resources     map[string]*gomesh.TccResource // register local resources
 	snode         *snowflake.Node                // snode
+	backoff       time.Duration                  // attach backoff time
 
 }
 
@@ -37,10 +39,18 @@ func New(config config.Config) (gomesh.TccServer, error) {
 		return nil, xerrors.Wrapf(err, "create snode error")
 	}
 
+	id := config.Get("gomesh", "tcc", "id").String("")
+
+	if id == "" {
+		return nil, xerrors.New("expect config gomesh.tcc.id")
+	}
+
 	return &agentImpl{
 		Logger:    slf4go.Get("tcc-agent"),
 		resources: make(map[string]*gomesh.TccResource),
 		snode:     snode,
+		id:        id,
+		backoff:   config.Get("gomesh", "tcc", "backoff").Duration(time.Second * 10),
 	}, nil
 }
 
@@ -59,6 +69,8 @@ func (agent *agentImpl) Start(config config.Config) error {
 	}
 
 	agent.engine = tcc.NewEngineClient(conn)
+
+	go agent.attach()
 
 	return nil
 }
@@ -123,11 +135,11 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequ
 
 	key := "R_" + agent.snode.Generate().String()
 
-	_, err := agent.engine.BeforeRequire(ctx, &tcc.BeforeRequireRequest{
+	_, err := agent.engine.BeginLockResource(ctx, &tcc.BeginLockResourceRequest{
 		Txid:     txid,
 		Agent:    agent.id,
 		Resource: grpcRequireFullMethod,
-		Key:      key,
+		Rid:      key,
 	})
 
 	if err != nil {
@@ -140,11 +152,11 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequ
 }
 
 func (agent *agentImpl) AfterRequire(ctx context.Context, txid string, grpcRequireFullMethod string, key string) error {
-	_, err := agent.engine.AfterRequire(ctx, &tcc.AfterRequireRequest{
+	_, err := agent.engine.EndLockResource(ctx, &tcc.EndLockResourceRequest{
 		Txid:     txid,
 		Agent:    agent.id,
 		Resource: grpcRequireFullMethod,
-		Key:      key,
+		Rid:      key,
 	})
 
 	if err != nil {

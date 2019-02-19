@@ -29,6 +29,7 @@ const (
 	TxStatus_Confirmed TxStatus = 1
 	TxStatus_Canceled  TxStatus = 2
 	TxStatus_Timeout   TxStatus = 3
+	TxStatus_Locked    TxStatus = 4
 )
 
 var TxStatus_name = map[int32]string{
@@ -36,6 +37,7 @@ var TxStatus_name = map[int32]string{
 	1: "Confirmed",
 	2: "Canceled",
 	3: "Timeout",
+	4: "Locked",
 }
 
 var TxStatus_value = map[string]int32{
@@ -43,6 +45,7 @@ var TxStatus_value = map[string]int32{
 	"Confirmed": 1,
 	"Canceled":  2,
 	"Timeout":   3,
+	"Locked":    4,
 }
 
 func (x TxStatus) String() string {
@@ -296,193 +299,193 @@ func (m *CancelTxResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CancelTxResponse proto.InternalMessageInfo
 
-type BeforeRequireRequest struct {
+type BeginLockResourceRequest struct {
 	Txid                 string   `protobuf:"bytes,1,opt,name=txid,proto3" json:"txid,omitempty"`
-	Agent                string   `protobuf:"bytes,2,opt,name=agent,proto3" json:"agent,omitempty"`
-	Resource             string   `protobuf:"bytes,3,opt,name=resource,proto3" json:"resource,omitempty"`
-	Key                  string   `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
+	Rid                  string   `protobuf:"bytes,2,opt,name=rid,proto3" json:"rid,omitempty"`
+	Agent                string   `protobuf:"bytes,3,opt,name=agent,proto3" json:"agent,omitempty"`
+	Resource             string   `protobuf:"bytes,4,opt,name=resource,proto3" json:"resource,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *BeforeRequireRequest) Reset()         { *m = BeforeRequireRequest{} }
-func (m *BeforeRequireRequest) String() string { return proto.CompactTextString(m) }
-func (*BeforeRequireRequest) ProtoMessage()    {}
-func (*BeforeRequireRequest) Descriptor() ([]byte, []int) {
+func (m *BeginLockResourceRequest) Reset()         { *m = BeginLockResourceRequest{} }
+func (m *BeginLockResourceRequest) String() string { return proto.CompactTextString(m) }
+func (*BeginLockResourceRequest) ProtoMessage()    {}
+func (*BeginLockResourceRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35dc7e9ebe8c6643, []int{6}
 }
 
-func (m *BeforeRequireRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_BeforeRequireRequest.Unmarshal(m, b)
+func (m *BeginLockResourceRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BeginLockResourceRequest.Unmarshal(m, b)
 }
-func (m *BeforeRequireRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_BeforeRequireRequest.Marshal(b, m, deterministic)
+func (m *BeginLockResourceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BeginLockResourceRequest.Marshal(b, m, deterministic)
 }
-func (m *BeforeRequireRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BeforeRequireRequest.Merge(m, src)
+func (m *BeginLockResourceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BeginLockResourceRequest.Merge(m, src)
 }
-func (m *BeforeRequireRequest) XXX_Size() int {
-	return xxx_messageInfo_BeforeRequireRequest.Size(m)
+func (m *BeginLockResourceRequest) XXX_Size() int {
+	return xxx_messageInfo_BeginLockResourceRequest.Size(m)
 }
-func (m *BeforeRequireRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_BeforeRequireRequest.DiscardUnknown(m)
+func (m *BeginLockResourceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_BeginLockResourceRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_BeforeRequireRequest proto.InternalMessageInfo
+var xxx_messageInfo_BeginLockResourceRequest proto.InternalMessageInfo
 
-func (m *BeforeRequireRequest) GetTxid() string {
+func (m *BeginLockResourceRequest) GetTxid() string {
 	if m != nil {
 		return m.Txid
 	}
 	return ""
 }
 
-func (m *BeforeRequireRequest) GetAgent() string {
+func (m *BeginLockResourceRequest) GetRid() string {
+	if m != nil {
+		return m.Rid
+	}
+	return ""
+}
+
+func (m *BeginLockResourceRequest) GetAgent() string {
 	if m != nil {
 		return m.Agent
 	}
 	return ""
 }
 
-func (m *BeforeRequireRequest) GetResource() string {
+func (m *BeginLockResourceRequest) GetResource() string {
 	if m != nil {
 		return m.Resource
 	}
 	return ""
 }
 
-func (m *BeforeRequireRequest) GetKey() string {
-	if m != nil {
-		return m.Key
-	}
-	return ""
-}
-
-type BeforeRequireRespose struct {
+type BeginLockResourceRespose struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *BeforeRequireRespose) Reset()         { *m = BeforeRequireRespose{} }
-func (m *BeforeRequireRespose) String() string { return proto.CompactTextString(m) }
-func (*BeforeRequireRespose) ProtoMessage()    {}
-func (*BeforeRequireRespose) Descriptor() ([]byte, []int) {
+func (m *BeginLockResourceRespose) Reset()         { *m = BeginLockResourceRespose{} }
+func (m *BeginLockResourceRespose) String() string { return proto.CompactTextString(m) }
+func (*BeginLockResourceRespose) ProtoMessage()    {}
+func (*BeginLockResourceRespose) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35dc7e9ebe8c6643, []int{7}
 }
 
-func (m *BeforeRequireRespose) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_BeforeRequireRespose.Unmarshal(m, b)
+func (m *BeginLockResourceRespose) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_BeginLockResourceRespose.Unmarshal(m, b)
 }
-func (m *BeforeRequireRespose) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_BeforeRequireRespose.Marshal(b, m, deterministic)
+func (m *BeginLockResourceRespose) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_BeginLockResourceRespose.Marshal(b, m, deterministic)
 }
-func (m *BeforeRequireRespose) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BeforeRequireRespose.Merge(m, src)
+func (m *BeginLockResourceRespose) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BeginLockResourceRespose.Merge(m, src)
 }
-func (m *BeforeRequireRespose) XXX_Size() int {
-	return xxx_messageInfo_BeforeRequireRespose.Size(m)
+func (m *BeginLockResourceRespose) XXX_Size() int {
+	return xxx_messageInfo_BeginLockResourceRespose.Size(m)
 }
-func (m *BeforeRequireRespose) XXX_DiscardUnknown() {
-	xxx_messageInfo_BeforeRequireRespose.DiscardUnknown(m)
+func (m *BeginLockResourceRespose) XXX_DiscardUnknown() {
+	xxx_messageInfo_BeginLockResourceRespose.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_BeforeRequireRespose proto.InternalMessageInfo
+var xxx_messageInfo_BeginLockResourceRespose proto.InternalMessageInfo
 
-type AfterRequireRequest struct {
+type EndLockResourceRequest struct {
 	Txid                 string   `protobuf:"bytes,1,opt,name=txid,proto3" json:"txid,omitempty"`
-	Agent                string   `protobuf:"bytes,2,opt,name=agent,proto3" json:"agent,omitempty"`
-	Resource             string   `protobuf:"bytes,3,opt,name=resource,proto3" json:"resource,omitempty"`
-	Key                  string   `protobuf:"bytes,4,opt,name=key,proto3" json:"key,omitempty"`
+	Rid                  string   `protobuf:"bytes,2,opt,name=rid,proto3" json:"rid,omitempty"`
+	Agent                string   `protobuf:"bytes,3,opt,name=agent,proto3" json:"agent,omitempty"`
+	Resource             string   `protobuf:"bytes,4,opt,name=resource,proto3" json:"resource,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *AfterRequireRequest) Reset()         { *m = AfterRequireRequest{} }
-func (m *AfterRequireRequest) String() string { return proto.CompactTextString(m) }
-func (*AfterRequireRequest) ProtoMessage()    {}
-func (*AfterRequireRequest) Descriptor() ([]byte, []int) {
+func (m *EndLockResourceRequest) Reset()         { *m = EndLockResourceRequest{} }
+func (m *EndLockResourceRequest) String() string { return proto.CompactTextString(m) }
+func (*EndLockResourceRequest) ProtoMessage()    {}
+func (*EndLockResourceRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35dc7e9ebe8c6643, []int{8}
 }
 
-func (m *AfterRequireRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AfterRequireRequest.Unmarshal(m, b)
+func (m *EndLockResourceRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EndLockResourceRequest.Unmarshal(m, b)
 }
-func (m *AfterRequireRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AfterRequireRequest.Marshal(b, m, deterministic)
+func (m *EndLockResourceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EndLockResourceRequest.Marshal(b, m, deterministic)
 }
-func (m *AfterRequireRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AfterRequireRequest.Merge(m, src)
+func (m *EndLockResourceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EndLockResourceRequest.Merge(m, src)
 }
-func (m *AfterRequireRequest) XXX_Size() int {
-	return xxx_messageInfo_AfterRequireRequest.Size(m)
+func (m *EndLockResourceRequest) XXX_Size() int {
+	return xxx_messageInfo_EndLockResourceRequest.Size(m)
 }
-func (m *AfterRequireRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_AfterRequireRequest.DiscardUnknown(m)
+func (m *EndLockResourceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_EndLockResourceRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AfterRequireRequest proto.InternalMessageInfo
+var xxx_messageInfo_EndLockResourceRequest proto.InternalMessageInfo
 
-func (m *AfterRequireRequest) GetTxid() string {
+func (m *EndLockResourceRequest) GetTxid() string {
 	if m != nil {
 		return m.Txid
 	}
 	return ""
 }
 
-func (m *AfterRequireRequest) GetAgent() string {
+func (m *EndLockResourceRequest) GetRid() string {
+	if m != nil {
+		return m.Rid
+	}
+	return ""
+}
+
+func (m *EndLockResourceRequest) GetAgent() string {
 	if m != nil {
 		return m.Agent
 	}
 	return ""
 }
 
-func (m *AfterRequireRequest) GetResource() string {
+func (m *EndLockResourceRequest) GetResource() string {
 	if m != nil {
 		return m.Resource
 	}
 	return ""
 }
 
-func (m *AfterRequireRequest) GetKey() string {
-	if m != nil {
-		return m.Key
-	}
-	return ""
-}
-
-type AfterRequireRespose struct {
+type EndLockResourceRespose struct {
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *AfterRequireRespose) Reset()         { *m = AfterRequireRespose{} }
-func (m *AfterRequireRespose) String() string { return proto.CompactTextString(m) }
-func (*AfterRequireRespose) ProtoMessage()    {}
-func (*AfterRequireRespose) Descriptor() ([]byte, []int) {
+func (m *EndLockResourceRespose) Reset()         { *m = EndLockResourceRespose{} }
+func (m *EndLockResourceRespose) String() string { return proto.CompactTextString(m) }
+func (*EndLockResourceRespose) ProtoMessage()    {}
+func (*EndLockResourceRespose) Descriptor() ([]byte, []int) {
 	return fileDescriptor_35dc7e9ebe8c6643, []int{9}
 }
 
-func (m *AfterRequireRespose) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AfterRequireRespose.Unmarshal(m, b)
+func (m *EndLockResourceRespose) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_EndLockResourceRespose.Unmarshal(m, b)
 }
-func (m *AfterRequireRespose) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AfterRequireRespose.Marshal(b, m, deterministic)
+func (m *EndLockResourceRespose) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_EndLockResourceRespose.Marshal(b, m, deterministic)
 }
-func (m *AfterRequireRespose) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AfterRequireRespose.Merge(m, src)
+func (m *EndLockResourceRespose) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EndLockResourceRespose.Merge(m, src)
 }
-func (m *AfterRequireRespose) XXX_Size() int {
-	return xxx_messageInfo_AfterRequireRespose.Size(m)
+func (m *EndLockResourceRespose) XXX_Size() int {
+	return xxx_messageInfo_EndLockResourceRespose.Size(m)
 }
-func (m *AfterRequireRespose) XXX_DiscardUnknown() {
-	xxx_messageInfo_AfterRequireRespose.DiscardUnknown(m)
+func (m *EndLockResourceRespose) XXX_DiscardUnknown() {
+	xxx_messageInfo_EndLockResourceRespose.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AfterRequireRespose proto.InternalMessageInfo
+var xxx_messageInfo_EndLockResourceRespose proto.InternalMessageInfo
 
 type AgentCommandRequest struct {
 	Txid                 string       `protobuf:"bytes,1,opt,name=txid,proto3" json:"txid,omitempty"`
@@ -578,6 +581,100 @@ func (m *AttachAgentRequest) GetAgent() string {
 	return ""
 }
 
+type ResourceStatusChangedRequest struct {
+	Txid                 string   `protobuf:"bytes,1,opt,name=txid,proto3" json:"txid,omitempty"`
+	Resource             string   `protobuf:"bytes,2,opt,name=resource,proto3" json:"resource,omitempty"`
+	Status               TxStatus `protobuf:"varint,3,opt,name=status,proto3,enum=tcc.TxStatus" json:"status,omitempty"`
+	Agent                string   `protobuf:"bytes,4,opt,name=agent,proto3" json:"agent,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ResourceStatusChangedRequest) Reset()         { *m = ResourceStatusChangedRequest{} }
+func (m *ResourceStatusChangedRequest) String() string { return proto.CompactTextString(m) }
+func (*ResourceStatusChangedRequest) ProtoMessage()    {}
+func (*ResourceStatusChangedRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_35dc7e9ebe8c6643, []int{12}
+}
+
+func (m *ResourceStatusChangedRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResourceStatusChangedRequest.Unmarshal(m, b)
+}
+func (m *ResourceStatusChangedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResourceStatusChangedRequest.Marshal(b, m, deterministic)
+}
+func (m *ResourceStatusChangedRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResourceStatusChangedRequest.Merge(m, src)
+}
+func (m *ResourceStatusChangedRequest) XXX_Size() int {
+	return xxx_messageInfo_ResourceStatusChangedRequest.Size(m)
+}
+func (m *ResourceStatusChangedRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResourceStatusChangedRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResourceStatusChangedRequest proto.InternalMessageInfo
+
+func (m *ResourceStatusChangedRequest) GetTxid() string {
+	if m != nil {
+		return m.Txid
+	}
+	return ""
+}
+
+func (m *ResourceStatusChangedRequest) GetResource() string {
+	if m != nil {
+		return m.Resource
+	}
+	return ""
+}
+
+func (m *ResourceStatusChangedRequest) GetStatus() TxStatus {
+	if m != nil {
+		return m.Status
+	}
+	return TxStatus_Created
+}
+
+func (m *ResourceStatusChangedRequest) GetAgent() string {
+	if m != nil {
+		return m.Agent
+	}
+	return ""
+}
+
+type ResourceStatusChangedRespose struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ResourceStatusChangedRespose) Reset()         { *m = ResourceStatusChangedRespose{} }
+func (m *ResourceStatusChangedRespose) String() string { return proto.CompactTextString(m) }
+func (*ResourceStatusChangedRespose) ProtoMessage()    {}
+func (*ResourceStatusChangedRespose) Descriptor() ([]byte, []int) {
+	return fileDescriptor_35dc7e9ebe8c6643, []int{13}
+}
+
+func (m *ResourceStatusChangedRespose) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ResourceStatusChangedRespose.Unmarshal(m, b)
+}
+func (m *ResourceStatusChangedRespose) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ResourceStatusChangedRespose.Marshal(b, m, deterministic)
+}
+func (m *ResourceStatusChangedRespose) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ResourceStatusChangedRespose.Merge(m, src)
+}
+func (m *ResourceStatusChangedRespose) XXX_Size() int {
+	return xxx_messageInfo_ResourceStatusChangedRespose.Size(m)
+}
+func (m *ResourceStatusChangedRespose) XXX_DiscardUnknown() {
+	xxx_messageInfo_ResourceStatusChangedRespose.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ResourceStatusChangedRespose proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterEnum("tcc.TxStatus", TxStatus_name, TxStatus_value)
 	proto.RegisterEnum("tcc.AgentCommand", AgentCommand_name, AgentCommand_value)
@@ -587,48 +684,54 @@ func init() {
 	proto.RegisterType((*CommitTxResponse)(nil), "tcc.CommitTxResponse")
 	proto.RegisterType((*CancelTxRequest)(nil), "tcc.CancelTxRequest")
 	proto.RegisterType((*CancelTxResponse)(nil), "tcc.CancelTxResponse")
-	proto.RegisterType((*BeforeRequireRequest)(nil), "tcc.BeforeRequireRequest")
-	proto.RegisterType((*BeforeRequireRespose)(nil), "tcc.BeforeRequireRespose")
-	proto.RegisterType((*AfterRequireRequest)(nil), "tcc.AfterRequireRequest")
-	proto.RegisterType((*AfterRequireRespose)(nil), "tcc.AfterRequireRespose")
+	proto.RegisterType((*BeginLockResourceRequest)(nil), "tcc.BeginLockResourceRequest")
+	proto.RegisterType((*BeginLockResourceRespose)(nil), "tcc.BeginLockResourceRespose")
+	proto.RegisterType((*EndLockResourceRequest)(nil), "tcc.EndLockResourceRequest")
+	proto.RegisterType((*EndLockResourceRespose)(nil), "tcc.EndLockResourceRespose")
 	proto.RegisterType((*AgentCommandRequest)(nil), "tcc.AgentCommandRequest")
 	proto.RegisterType((*AttachAgentRequest)(nil), "tcc.AttachAgentRequest")
+	proto.RegisterType((*ResourceStatusChangedRequest)(nil), "tcc.ResourceStatusChangedRequest")
+	proto.RegisterType((*ResourceStatusChangedRespose)(nil), "tcc.ResourceStatusChangedRespose")
 }
 
 func init() { proto.RegisterFile("tcc.proto", fileDescriptor_35dc7e9ebe8c6643) }
 
 var fileDescriptor_35dc7e9ebe8c6643 = []byte{
-	// 466 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x94, 0xd1, 0x8f, 0xd2, 0x40,
-	0x10, 0xc6, 0xaf, 0x70, 0xc7, 0xc1, 0x1c, 0x68, 0x9d, 0xe3, 0x14, 0x1b, 0x63, 0x4c, 0x8d, 0xd1,
-	0x60, 0xc2, 0x99, 0x33, 0xfe, 0x01, 0x40, 0xee, 0xc1, 0x07, 0x34, 0x39, 0x79, 0xf2, 0xad, 0xb7,
-	0x1d, 0xa0, 0x39, 0xbb, 0x8b, 0xdb, 0x69, 0x0e, 0xff, 0x70, 0xdf, 0x4d, 0x77, 0x29, 0x2e, 0x05,
-	0xf1, 0xed, 0x9e, 0x68, 0x77, 0xbe, 0xef, 0x9b, 0x59, 0xe6, 0x97, 0x42, 0x8b, 0x85, 0x18, 0x2c,
-	0xb5, 0x62, 0x85, 0x75, 0x16, 0x22, 0x0c, 0xa1, 0xfd, 0x85, 0xee, 0xa7, 0xab, 0x1b, 0xfa, 0x99,
-	0x53, 0xc6, 0x88, 0x70, 0xcc, 0xab, 0x24, 0xee, 0x79, 0xaf, 0xbc, 0x77, 0xad, 0x1b, 0xf3, 0x1c,
-	0xbe, 0x86, 0xce, 0x5a, 0x93, 0x2d, 0x95, 0xcc, 0x68, 0x23, 0xaa, 0x39, 0xa2, 0x37, 0xf0, 0x78,
-	0xac, 0xd2, 0x34, 0xe1, 0xc3, 0x59, 0x08, 0xfe, 0x5f, 0x99, 0x8d, 0x33, 0xd6, 0x48, 0x0a, 0xfa,
-	0xf1, 0x7f, 0xeb, 0x46, 0xb6, 0xb6, 0x4a, 0xe8, 0x8e, 0x68, 0xa6, 0x34, 0x15, 0xc6, 0xc4, 0xfe,
-	0xfc, 0xc3, 0x8f, 0x5d, 0x38, 0x89, 0xe6, 0x24, 0x79, 0x3d, 0xb6, 0x7d, 0xc1, 0x00, 0x9a, 0x9a,
-	0x32, 0x95, 0x6b, 0x41, 0xbd, 0xba, 0x29, 0x6c, 0xde, 0xd1, 0x87, 0xfa, 0x1d, 0xfd, 0xea, 0x1d,
-	0x9b, 0xe3, 0xe2, 0x31, 0x7c, 0xba, 0xd3, 0x2f, 0x5b, 0xaa, 0x8c, 0xc2, 0x14, 0xce, 0x87, 0x33,
-	0x26, 0xfd, 0x40, 0x63, 0x5c, 0x54, 0xdb, 0xd9, 0x29, 0x34, 0x9c, 0x0f, 0x8b, 0xb4, 0xe2, 0x1f,
-	0x8e, 0x64, 0x7c, 0x68, 0x0a, 0xb7, 0x5f, 0xad, 0xd2, 0xef, 0x3d, 0x9c, 0x0a, 0x9b, 0x60, 0x46,
-	0x79, 0x74, 0xf5, 0x64, 0x50, 0x50, 0xb3, 0x15, 0x5d, 0x2a, 0xc2, 0x3e, 0xe0, 0x90, 0x39, 0x12,
-	0x0b, 0x53, 0x2e, 0x5b, 0x6e, 0x2e, 0xe9, 0x39, 0x97, 0xec, 0x0f, 0xa1, 0x39, 0x5d, 0x7d, 0xe3,
-	0x88, 0xf3, 0x0c, 0xcf, 0xe0, 0x74, 0xac, 0x29, 0x62, 0x8a, 0xfd, 0x23, 0xec, 0x40, 0x6b, 0xac,
-	0xe4, 0x2c, 0xd1, 0x29, 0xc5, 0xbe, 0x87, 0x6d, 0x68, 0xda, 0x4d, 0x53, 0xec, 0xd7, 0x0a, 0xe5,
-	0x34, 0x49, 0x49, 0xe5, 0xec, 0xd7, 0xfb, 0x6f, 0xa1, 0xed, 0xce, 0x61, 0x62, 0xbe, 0x4e, 0x26,
-	0x93, 0xcf, 0x53, 0xff, 0x08, 0x01, 0x1a, 0xd6, 0xe7, 0x7b, 0x57, 0xbf, 0x6b, 0xd0, 0xb8, 0x96,
-	0xf3, 0x44, 0x12, 0x0e, 0xe0, 0xc4, 0xf0, 0x8b, 0xf6, 0x1e, 0x2e, 0xef, 0x01, 0xba, 0x47, 0x6b,
-	0xbc, 0x3f, 0x41, 0xc3, 0x32, 0x8a, 0x5d, 0x53, 0xad, 0x70, 0x1d, 0x5c, 0x54, 0x4e, 0x1d, 0x9b,
-	0xe9, 0x5e, 0xda, 0xb6, 0x99, 0x2e, 0x6d, 0x15, 0x84, 0xf1, 0x1a, 0x3a, 0x5b, 0x48, 0xe1, 0x73,
-	0xa3, 0xdb, 0x87, 0x75, 0xb0, 0xb7, 0x64, 0x76, 0x8f, 0x23, 0x68, 0xbb, 0x48, 0x60, 0xcf, 0xee,
-	0x6c, 0x17, 0xca, 0x60, 0x5f, 0xa5, 0xcc, 0x38, 0x73, 0x76, 0x89, 0xcf, 0xac, 0x70, 0x67, 0xbb,
-	0x65, 0xc2, 0x2e, 0x6a, 0x1f, 0xbc, 0xd1, 0xcb, 0xef, 0x2f, 0xe6, 0x09, 0x2f, 0xf2, 0xdb, 0x81,
-	0x50, 0xe9, 0xe5, 0x5c, 0xa5, 0x94, 0x2d, 0x24, 0xf1, 0xbd, 0xd2, 0x77, 0x97, 0x2c, 0xc4, 0x6d,
-	0xc3, 0x7c, 0x7c, 0x3e, 0xfe, 0x09, 0x00, 0x00, 0xff, 0xff, 0xad, 0x58, 0x2f, 0x92, 0x89, 0x04,
-	0x00, 0x00,
+	// 535 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x54, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0xad, 0x93, 0xd4, 0x4d, 0xa6, 0x09, 0x75, 0x87, 0x16, 0x2c, 0x53, 0x2a, 0x30, 0xaa, 0x40,
+	0x41, 0x4a, 0x51, 0x11, 0x3f, 0xa0, 0x89, 0x7a, 0x40, 0x10, 0x10, 0x21, 0x27, 0x24, 0x0e, 0xee,
+	0x7a, 0x70, 0xac, 0xe2, 0xdd, 0x60, 0xaf, 0xd5, 0xfc, 0x07, 0x7e, 0x29, 0xff, 0x02, 0x79, 0xd7,
+	0x76, 0x9d, 0x2f, 0x23, 0x71, 0xe8, 0xcd, 0xde, 0x79, 0xef, 0xcd, 0xf3, 0xec, 0x3c, 0x43, 0x47,
+	0x32, 0x36, 0x98, 0xc7, 0x42, 0x0a, 0x6c, 0x4a, 0xc6, 0x5c, 0x17, 0xba, 0x9f, 0xe8, 0x76, 0xba,
+	0x98, 0xd0, 0xaf, 0x94, 0x12, 0x89, 0x08, 0x2d, 0xb9, 0x08, 0x7d, 0xdb, 0x78, 0x66, 0xbc, 0xea,
+	0x4c, 0xd4, 0xb3, 0xfb, 0x02, 0x7a, 0x39, 0x26, 0x99, 0x0b, 0x9e, 0x50, 0x09, 0x6a, 0x54, 0x40,
+	0x67, 0x70, 0x30, 0x12, 0x51, 0x14, 0xca, 0x7a, 0x2d, 0x04, 0xeb, 0x0e, 0xa6, 0xe5, 0x14, 0xd5,
+	0xe3, 0x8c, 0x7e, 0xfe, 0x9b, 0x5a, 0xc2, 0x72, 0x6a, 0x0c, 0xf6, 0x90, 0x82, 0x90, 0x7f, 0x14,
+	0xec, 0x66, 0x42, 0x89, 0x48, 0x63, 0x46, 0x35, 0x1a, 0x68, 0x41, 0x33, 0x2e, 0x8d, 0x67, 0x8f,
+	0x78, 0x04, 0xbb, 0x5e, 0x40, 0x5c, 0xda, 0x4d, 0x75, 0xa6, 0x5f, 0xd0, 0x81, 0x76, 0x9c, 0xcb,
+	0xd9, 0x2d, 0x55, 0x28, 0xdf, 0x5d, 0x67, 0x63, 0xcf, 0x64, 0x2e, 0x12, 0x72, 0xe7, 0xf0, 0xe8,
+	0x8a, 0xfb, 0xf7, 0xe9, 0xc6, 0xde, 0xd0, 0x51, 0x7b, 0x89, 0xe1, 0xe1, 0x65, 0x46, 0xcf, 0xe6,
+	0xed, 0x71, 0xbf, 0xce, 0x48, 0xb5, 0x41, 0x63, 0xb9, 0x01, 0xbe, 0x86, 0x3d, 0xa6, 0x15, 0x94,
+	0xa9, 0x07, 0x17, 0x87, 0x83, 0x6c, 0x87, 0x96, 0xa4, 0x0b, 0x84, 0xdb, 0x07, 0xbc, 0x94, 0xd2,
+	0x63, 0x33, 0x55, 0x2e, 0x5a, 0x96, 0x5f, 0x65, 0x54, 0xbe, 0xca, 0xfd, 0x6d, 0xc0, 0x49, 0xe1,
+	0xf9, 0xab, 0xf4, 0x64, 0x9a, 0x8c, 0x66, 0x1e, 0x0f, 0xe8, 0xbf, 0x9d, 0x9e, 0x81, 0x99, 0x28,
+	0x9d, 0xdc, 0x68, 0x4f, 0x19, 0x9d, 0x2e, 0xb4, 0xf8, 0x24, 0x2f, 0xde, 0xb9, 0x69, 0x55, 0xdd,
+	0x9c, 0x6e, 0x35, 0xa3, 0xa6, 0xd9, 0x1f, 0x43, 0xbb, 0x50, 0xc2, 0x7d, 0xd8, 0x1b, 0xc5, 0xe4,
+	0x49, 0xf2, 0xad, 0x1d, 0xec, 0x41, 0x67, 0x24, 0xf8, 0x8f, 0x30, 0x8e, 0xc8, 0xb7, 0x0c, 0xec,
+	0x42, 0x5b, 0x6f, 0x29, 0xf9, 0x56, 0x23, 0x43, 0x4e, 0xc3, 0x88, 0x44, 0x2a, 0xad, 0x26, 0x02,
+	0x98, 0xd9, 0x3d, 0x91, 0x6f, 0xb5, 0xfa, 0x2f, 0xa1, 0x5b, 0x9d, 0xa0, 0x92, 0xfc, 0x3c, 0x1e,
+	0x8f, 0xdf, 0x4f, 0xad, 0x9d, 0x0c, 0xa8, 0x35, 0x2c, 0xe3, 0xe2, 0x4f, 0x13, 0xcc, 0x2b, 0x1e,
+	0x84, 0x9c, 0x70, 0x00, 0xbb, 0x2a, 0x87, 0xa8, 0x6f, 0xa0, 0x9a, 0x5b, 0x07, 0xab, 0x47, 0x79,
+	0x4c, 0xdf, 0x81, 0xa9, 0xb3, 0x86, 0x47, 0xaa, 0xba, 0x92, 0x4f, 0xe7, 0x78, 0xe5, 0xb4, 0x42,
+	0x53, 0xdd, 0x0b, 0xda, 0x72, 0x36, 0x0b, 0xda, 0x4a, 0x14, 0xf1, 0x0b, 0x1c, 0xae, 0xc5, 0x02,
+	0x9f, 0x2a, 0xec, 0xb6, 0x88, 0x3a, 0x5b, 0xcb, 0x6a, 0xe6, 0xf8, 0x01, 0x0e, 0x56, 0x76, 0x1b,
+	0x9f, 0x28, 0xc6, 0xe6, 0x8c, 0x39, 0x5b, 0x8a, 0x5a, 0xec, 0x3b, 0x1c, 0x6f, 0xbc, 0x60, 0x7c,
+	0xae, 0x58, 0x75, 0x9b, 0xe8, 0xd4, 0x42, 0xb4, 0xfc, 0x10, 0xf6, 0x2b, 0x9b, 0x8f, 0x8f, 0x75,
+	0x48, 0xd6, 0xb2, 0xe0, 0xd8, 0xeb, 0xe9, 0xd1, 0x95, 0x37, 0xc6, 0xf0, 0xf4, 0xdb, 0x49, 0x10,
+	0xca, 0x59, 0x7a, 0x3d, 0x60, 0x22, 0x3a, 0x0f, 0x44, 0x44, 0xc9, 0x8c, 0x93, 0xbc, 0x15, 0xf1,
+	0xcd, 0xb9, 0x64, 0xec, 0xda, 0x54, 0x3f, 0xee, 0xb7, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x38,
+	0x21, 0x62, 0x3e, 0xc5, 0x05, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -646,8 +749,9 @@ type EngineClient interface {
 	NewTx(ctx context.Context, in *NewTxRequest, opts ...grpc.CallOption) (*NewTxResponse, error)
 	Commit(ctx context.Context, in *CommitTxRequest, opts ...grpc.CallOption) (*CommitTxResponse, error)
 	Cancel(ctx context.Context, in *CancelTxRequest, opts ...grpc.CallOption) (*CancelTxResponse, error)
-	BeforeRequire(ctx context.Context, in *BeforeRequireRequest, opts ...grpc.CallOption) (*BeforeRequireRespose, error)
-	AfterRequire(ctx context.Context, in *AfterRequireRequest, opts ...grpc.CallOption) (*AfterRequireRespose, error)
+	BeginLockResource(ctx context.Context, in *BeginLockResourceRequest, opts ...grpc.CallOption) (*BeginLockResourceRespose, error)
+	EndLockResource(ctx context.Context, in *EndLockResourceRequest, opts ...grpc.CallOption) (*EndLockResourceRespose, error)
+	ResourceStatusChanged(ctx context.Context, in *ResourceStatusChangedRequest, opts ...grpc.CallOption) (*ResourceStatusChangedRespose, error)
 	AttachAgent(ctx context.Context, in *AttachAgentRequest, opts ...grpc.CallOption) (Engine_AttachAgentClient, error)
 }
 
@@ -686,18 +790,27 @@ func (c *engineClient) Cancel(ctx context.Context, in *CancelTxRequest, opts ...
 	return out, nil
 }
 
-func (c *engineClient) BeforeRequire(ctx context.Context, in *BeforeRequireRequest, opts ...grpc.CallOption) (*BeforeRequireRespose, error) {
-	out := new(BeforeRequireRespose)
-	err := c.cc.Invoke(ctx, "/tcc.Engine/BeforeRequire", in, out, opts...)
+func (c *engineClient) BeginLockResource(ctx context.Context, in *BeginLockResourceRequest, opts ...grpc.CallOption) (*BeginLockResourceRespose, error) {
+	out := new(BeginLockResourceRespose)
+	err := c.cc.Invoke(ctx, "/tcc.Engine/BeginLockResource", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *engineClient) AfterRequire(ctx context.Context, in *AfterRequireRequest, opts ...grpc.CallOption) (*AfterRequireRespose, error) {
-	out := new(AfterRequireRespose)
-	err := c.cc.Invoke(ctx, "/tcc.Engine/AfterRequire", in, out, opts...)
+func (c *engineClient) EndLockResource(ctx context.Context, in *EndLockResourceRequest, opts ...grpc.CallOption) (*EndLockResourceRespose, error) {
+	out := new(EndLockResourceRespose)
+	err := c.cc.Invoke(ctx, "/tcc.Engine/EndLockResource", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineClient) ResourceStatusChanged(ctx context.Context, in *ResourceStatusChangedRequest, opts ...grpc.CallOption) (*ResourceStatusChangedRespose, error) {
+	out := new(ResourceStatusChangedRespose)
+	err := c.cc.Invoke(ctx, "/tcc.Engine/ResourceStatusChanged", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -741,8 +854,9 @@ type EngineServer interface {
 	NewTx(context.Context, *NewTxRequest) (*NewTxResponse, error)
 	Commit(context.Context, *CommitTxRequest) (*CommitTxResponse, error)
 	Cancel(context.Context, *CancelTxRequest) (*CancelTxResponse, error)
-	BeforeRequire(context.Context, *BeforeRequireRequest) (*BeforeRequireRespose, error)
-	AfterRequire(context.Context, *AfterRequireRequest) (*AfterRequireRespose, error)
+	BeginLockResource(context.Context, *BeginLockResourceRequest) (*BeginLockResourceRespose, error)
+	EndLockResource(context.Context, *EndLockResourceRequest) (*EndLockResourceRespose, error)
+	ResourceStatusChanged(context.Context, *ResourceStatusChangedRequest) (*ResourceStatusChangedRespose, error)
 	AttachAgent(*AttachAgentRequest, Engine_AttachAgentServer) error
 }
 
@@ -804,38 +918,56 @@ func _Engine_Cancel_Handler(srv interface{}, ctx context.Context, dec func(inter
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_BeforeRequire_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BeforeRequireRequest)
+func _Engine_BeginLockResource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BeginLockResourceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).BeforeRequire(ctx, in)
+		return srv.(EngineServer).BeginLockResource(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tcc.Engine/BeforeRequire",
+		FullMethod: "/tcc.Engine/BeginLockResource",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).BeforeRequire(ctx, req.(*BeforeRequireRequest))
+		return srv.(EngineServer).BeginLockResource(ctx, req.(*BeginLockResourceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Engine_AfterRequire_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AfterRequireRequest)
+func _Engine_EndLockResource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EndLockResourceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EngineServer).AfterRequire(ctx, in)
+		return srv.(EngineServer).EndLockResource(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tcc.Engine/AfterRequire",
+		FullMethod: "/tcc.Engine/EndLockResource",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EngineServer).AfterRequire(ctx, req.(*AfterRequireRequest))
+		return srv.(EngineServer).EndLockResource(ctx, req.(*EndLockResourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Engine_ResourceStatusChanged_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourceStatusChangedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServer).ResourceStatusChanged(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/tcc.Engine/ResourceStatusChanged",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServer).ResourceStatusChanged(ctx, req.(*ResourceStatusChangedRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -878,12 +1010,16 @@ var _Engine_serviceDesc = grpc.ServiceDesc{
 			Handler:    _Engine_Cancel_Handler,
 		},
 		{
-			MethodName: "BeforeRequire",
-			Handler:    _Engine_BeforeRequire_Handler,
+			MethodName: "BeginLockResource",
+			Handler:    _Engine_BeginLockResource_Handler,
 		},
 		{
-			MethodName: "AfterRequire",
-			Handler:    _Engine_AfterRequire_Handler,
+			MethodName: "EndLockResource",
+			Handler:    _Engine_EndLockResource_Handler,
+		},
+		{
+			MethodName: "ResourceStatusChanged",
+			Handler:    _Engine_ResourceStatusChanged_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
