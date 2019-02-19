@@ -1,0 +1,80 @@
+// Package basic The basic agent implement
+package basic
+
+import (
+	"net"
+
+	"github.com/dynamicgo/xerrors"
+
+	extend "github.com/dynamicgo/go-config-extend"
+
+	"github.com/dynamicgo/slf4go"
+
+	"github.com/gomeshnetwork/gomesh"
+
+	config "github.com/dynamicgo/go-config"
+	"google.golang.org/grpc"
+)
+
+type agentImpl struct {
+	slf4go.Logger
+	config config.Config
+}
+
+func newAgent() *agentImpl {
+	return &agentImpl{
+		Logger: slf4go.Get("basic-agent"),
+	}
+}
+
+func (agent *agentImpl) Start(config config.Config) error {
+	agent.config = config
+
+	return nil
+}
+
+func (agent *agentImpl) Config(name string) (config.Config, error) {
+	config, err := extend.SubConfig(agent.config, "gomesh", "service", name)
+
+	if err != nil {
+		return nil, xerrors.Wrapf(err, "get config gomesh.service.%s error", name)
+	}
+
+	return config, nil
+}
+
+func (agent *agentImpl) Listen() (net.Listener, error) {
+
+	laddr := agent.config.Get("gomesh", "grpc", "laddr").String(":2018")
+
+	listener, err := net.Listen("tcp", laddr)
+
+	if err != nil {
+		return nil, xerrors.Wrapf(err, "create grpc listener %s error", laddr)
+	}
+
+	return listener, nil
+}
+
+func (agent *agentImpl) Connect(name string, options ...grpc.DialOption) (*grpc.ClientConn, error) {
+
+	config, err := agent.Config(name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	remote := config.Get("remote").String("localhost:2018")
+
+	conn, err := grpc.Dial(remote, grpc.WithInsecure())
+
+	if err != nil {
+		return nil, xerrors.Wrapf(err, "connect to rpc server %s with url %s error", name, remote)
+	}
+
+	return conn, nil
+}
+
+func init() {
+	gomesh.RegisterAgent(newAgent())
+}
