@@ -108,7 +108,7 @@ func (scheduler *schedulerImpl) EndLockResource(ctx context.Context, request *tc
 }
 
 func (scheduler *schedulerImpl) AttachAgent(request *tcc.AttachAgentRequest, agentServer tcc.Engine_AttachAgentServer) error {
-	scheduler.Notifier.Register(request.Agent, agentServer)
+	scheduler.Notifier.RunAgent(request.Agent, agentServer)
 	return nil
 }
 

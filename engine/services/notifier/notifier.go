@@ -87,7 +87,7 @@ func (notifier *notifierImpl) send(id string, commit bool) {
 	}
 }
 
-func (notifier *notifierImpl) Register(agent string, server tcc.Engine_AttachAgentServer) {
+func (notifier *notifierImpl) RunAgent(agent string, server tcc.Engine_AttachAgentServer) {
 	as := &agentServer{
 		agent:  agent,
 		server: server,
@@ -95,12 +95,12 @@ func (notifier *notifierImpl) Register(agent string, server tcc.Engine_AttachAge
 		cancel: make(chan *engine.Resource, notifier.cachesize),
 	}
 
-	go notifier.doAgentLoop(as)
-
 	notifier.Lock()
-	defer notifier.Unlock()
-
 	notifier.agents[agent] = as
+	notifier.Unlock()
+
+	notifier.doAgentLoop(as)
+
 }
 
 func (notifier *notifierImpl) doAgentLoop(as *agentServer) {

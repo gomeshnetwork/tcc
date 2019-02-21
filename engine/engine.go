@@ -51,5 +51,5 @@ type Storage interface {
 type Notifier interface {
 	CommitTx(id string)
 	CancelTx(id string)
-	Register(agent string, server tcc.Engine_AttachAgentServer)
+	RunAgent(agent string, server tcc.Engine_AttachAgentServer)
 }
