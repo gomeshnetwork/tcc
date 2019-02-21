@@ -59,7 +59,7 @@ func (agent *agentImpl) Start(config config.Config) error {
 		return xerrors.New("config gomesh.tcc.remote must be set")
 	}
 
-	conn, err := grpc.Dial(remote)
+	conn, err := grpc.Dial(remote, grpc.WithInsecure())
 
 	if err != nil {
 		return xerrors.Wrapf(err, "grpc connect to %s error", remote)
