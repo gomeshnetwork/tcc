@@ -81,7 +81,7 @@ func (storage *storageImpl) NewResource(resource *engine.Resource) error {
 
 func (storage *storageImpl) UpdateResourceStatus(txid, require, agent, resource string, status tcc.TxStatus) error {
 	_, err := storage.engine.
-		Where(`"tx" = ? and "require" = ? and "agent" = ? and "resource" = ?`).
+		Where(`"tx" = ? and "require" = ? and "agent" = ? and "resource" = ?`, txid, require, agent, resource).
 		Cols("status").Update(&engine.Resource{Status: status})
 
 	if err != nil {
@@ -105,7 +105,7 @@ func (storage *storageImpl) GetResourceByTx(id string) ([]*engine.Resource, erro
 
 func (storage *storageImpl) UpdateResourcesStatus(txid, agent, resource string, status tcc.TxStatus) error {
 	_, err := storage.engine.
-		Where(`"tx" = ? and "agent" = ? and "resource" = ?`).
+		Where(`"tx" = ? and "agent" = ? and "resource" = ?`, txid, agent, resource).
 		Cols("status").Update(&engine.Resource{Status: status})
 
 	if err != nil {
