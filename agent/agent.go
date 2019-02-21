@@ -31,30 +31,27 @@ type agentImpl struct {
 }
 
 // New create new agent which implement gomesh.TccServer interface
-func New(config config.Config) (gomesh.TccServer, error) {
+func New() gomesh.TccServer {
 
-	snode, err := snowflake.NewNode(0)
-
-	if err != nil {
-		return nil, xerrors.Wrapf(err, "create snode error")
-	}
-
-	id := config.Get("gomesh", "tcc", "id").String("")
-
-	if id == "" {
-		return nil, xerrors.New("expect config gomesh.tcc.id")
-	}
+	snode, _ := snowflake.NewNode(0)
 
 	return &agentImpl{
 		Logger:    slf4go.Get("tcc-agent"),
 		resources: make(map[string]*gomesh.TccResource),
 		snode:     snode,
-		id:        id,
 		backoff:   config.Get("gomesh", "tcc", "backoff").Duration(time.Second * 10),
-	}, nil
+	}
 }
 
 func (agent *agentImpl) Start(config config.Config) error {
+
+	id := config.Get("gomesh", "tcc", "id").String("")
+
+	if id == "" {
+		return xerrors.New("expect config gomesh.tcc.id")
+	}
+
+	agent.id = id
 
 	remote := config.Get("gomesh", "tcc", "remote").String("")
 
