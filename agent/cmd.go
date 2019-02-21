@@ -14,6 +14,7 @@ func (agent *agentImpl) cmdLoop(client tcc.Engine_AttachAgentClient) {
 
 		if err != nil {
 			agent.ErrorF("%s", xerrors.Wrapf(err, "agent recv cmd error"))
+			time.Sleep(time.Second * 10)
 			go agent.attach()
 			return
 		}
