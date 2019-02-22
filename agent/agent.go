@@ -128,7 +128,20 @@ func (agent *agentImpl) Cancel(ctx context.Context, txid string) error {
 	return nil
 }
 
+func (agent *agentImpl) isTccResource(grpcRequireFullMethod string) bool {
+	agent.RLock()
+	defer agent.RUnlock()
+
+	_, ok := agent.resources[grpcRequireFullMethod]
+
+	return ok
+}
+
 func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequireFullMethod string) (string, error) {
+
+	if !agent.isTccResource(grpcRequireFullMethod) {
+		return "", nil
+	}
 
 	key := "R_" + agent.snode.Generate().String()
 
@@ -149,6 +162,11 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequ
 }
 
 func (agent *agentImpl) AfterRequire(ctx context.Context, txid string, grpcRequireFullMethod string, key string) error {
+
+	if !agent.isTccResource(grpcRequireFullMethod) {
+		return nil
+	}
+
 	_, err := agent.engine.EndLockResource(ctx, &tcc.EndLockResourceRequest{
 		Txid:     txid,
 		Agent:    agent.id,
