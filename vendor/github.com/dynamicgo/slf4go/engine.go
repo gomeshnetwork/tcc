@@ -140,6 +140,33 @@ func (engine *Engine) Load(config config.Config) error {
 		engine.namedBackend[binder.Backend] = backend
 	}
 
+	// try reload loggers
+
+	for name, logger := range engine.logger {
+		var backend LoggerFactory
+		var level int
+		binder, ok := engine.loggerMapping[name]
+
+		if ok {
+			backend, ok = engine.namedBackend[binder.Backend]
+
+			if !ok {
+				backend = engine.defaultBackend
+				println("warning: unknown backend", binder.Backend)
+			}
+
+			level = binder.levels
+
+		} else {
+			backend = engine.defaultBackend
+			level = engine.level
+		}
+
+		wrapper := logger.(*loggerWrapper)
+		wrapper.impl = backend.GetLogger(name)
+		wrapper.level = level
+	}
+
 	return nil
 }
 
