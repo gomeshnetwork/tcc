@@ -27,7 +27,7 @@ type agentImpl struct {
 	resources     map[string]*gomesh.TccResource // register local resources
 	snode         *snowflake.Node                // snode
 	backoff       time.Duration                  // attach backoff time
-
+	innerTxs      map[string]string              // inner txs
 }
 
 // New create new agent which implement gomesh.TccServer interface
@@ -40,6 +40,7 @@ func New() gomesh.TccServer {
 		resources: make(map[string]*gomesh.TccResource),
 		snode:     snode,
 		backoff:   config.Get("gomesh", "tcc", "backoff").Duration(time.Second * 10),
+		innerTxs:  make(map[string]string),
 	}
 }
 
@@ -145,6 +146,18 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequ
 
 	key := "R_" + agent.snode.Generate().String()
 
+	if txid == "" {
+		txid, err := agent.NewTx(ctx, txid)
+
+		if err != nil {
+			return "", err
+		}
+
+		agent.Lock()
+		agent.innerTxs[key] = txid
+		agent.Unlock()
+	}
+
 	_, err := agent.engine.BeginLockResource(ctx, &tcc.BeginLockResourceRequest{
 		Txid:     txid,
 		Agent:    agent.id,
@@ -177,6 +190,14 @@ func (agent *agentImpl) AfterRequire(ctx context.Context, txid string, grpcRequi
 	if err != nil {
 		agent.ErrorF("create tcc session error: %s", err)
 		return err
+	}
+
+	if txid == "" {
+		agent.Lock()
+		txid = agent.innerTxs[key]
+		agent.Unlock()
+
+		return agent.Commit(ctx, txid)
 	}
 
 	return nil

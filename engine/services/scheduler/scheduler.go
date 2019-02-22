@@ -35,19 +35,25 @@ func (scheduler *schedulerImpl) GrpcHandle(server *grpc.Server) error {
 
 func (scheduler *schedulerImpl) NewTx(ctx context.Context, request *tcc.NewTxRequest) (*tcc.NewTxResponse, error) {
 
+	txid, err := scheduler.newTx(ctx, request.Txid)
+
+	return &tcc.NewTxResponse{
+		Txid: txid,
+	}, err
+}
+
+func (scheduler *schedulerImpl) newTx(ctx context.Context, pid string) (string, error) {
 	tx := &engine.Transaction{
 		ID:     scheduler.SNode.Generate().String(),
-		PID:    request.Txid,
+		PID:    pid,
 		Status: tcc.TxStatus_Created,
 	}
 
 	if err := scheduler.Storage.NewTx(tx); err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &tcc.NewTxResponse{
-		Txid: tx.ID,
-	}, nil
+	return tx.ID, nil
 }
 
 func (scheduler *schedulerImpl) Commit(ctx context.Context, request *tcc.CommitTxRequest) (*tcc.CommitTxResponse, error) {
