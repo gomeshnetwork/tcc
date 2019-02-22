@@ -53,6 +53,8 @@ func (scheduler *schedulerImpl) newTx(ctx context.Context, pid string) (string, 
 		return "", err
 	}
 
+	scheduler.DebugF("new tx %s", tx.ID)
+
 	return tx.ID, nil
 }
 
