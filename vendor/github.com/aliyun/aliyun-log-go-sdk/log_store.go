@@ -80,19 +80,19 @@ func copyIncompressible(src, dst []byte) (int, error) {
 	} else {
 		dst[di] = 0xF0
 		if di++; di == dn {
-			return di, lz4.ErrShortBuffer
+			return di, nil
 		}
 		lLen -= 0xF
 		for ; lLen >= 0xFF; lLen -= 0xFF {
 			dst[di] = 0xFF
 			if di++; di == dn {
-				return di, lz4.ErrShortBuffer
+				return di, nil
 			}
 		}
 		dst[di] = byte(lLen)
 	}
 	if di++; di+len(src) > dn {
-		return di, lz4.ErrShortBuffer
+		return di, nil
 	}
 	di += copy(dst[di:], src)
 	return di, nil
@@ -112,7 +112,8 @@ func (s *LogStore) PutRawLog(rawLogData []byte) (err error) {
 	case Compress_LZ4:
 		// Compresse body with lz4
 		out = make([]byte, lz4.CompressBlockBound(len(rawLogData)))
-		n, err := lz4.CompressBlock(rawLogData, out, 0)
+		var hashTable [1 << 16]int
+		n, err := lz4.CompressBlock(rawLogData, out, hashTable[:])
 		if err != nil {
 			return NewClientError(err)
 		}
@@ -173,7 +174,8 @@ func (s *LogStore) PutLogs(lg *LogGroup) (err error) {
 	case Compress_LZ4:
 		// Compresse body with lz4
 		out = make([]byte, lz4.CompressBlockBound(len(body)))
-		n, err := lz4.CompressBlock(body, out, 0)
+		var hashTable [1 << 16]int
+		n, err := lz4.CompressBlock(body, out, hashTable[:])
 		if err != nil {
 			return NewClientError(err)
 		}
@@ -200,6 +202,73 @@ func (s *LogStore) PutLogs(lg *LogGroup) (err error) {
 	}
 
 	uri := fmt.Sprintf("/logstores/%v", s.Name)
+	r, err := request(s.project, "POST", uri, h, out[:outLen])
+	if err != nil {
+		return NewClientError(err)
+	}
+	defer r.Body.Close()
+	body, _ = ioutil.ReadAll(r.Body)
+	if r.StatusCode != http.StatusOK {
+		err := new(Error)
+		json.Unmarshal(body, err)
+		return err
+	}
+	return nil
+}
+
+// PostLogStoreLogs put logs into Shard logstore by hashKey.
+// The callers should transform user logs into LogGroup.
+func (s *LogStore) PostLogStoreLogs(lg *LogGroup, hashKey *string) (err error) {
+	if len(lg.Logs) == 0 {
+		// empty log group or empty hashkey
+		return nil
+	}
+
+	if hashKey == nil || *hashKey == "" {
+		// empty hash call PutLogs
+		return s.PutLogs(lg)
+	}
+
+	body, err := proto.Marshal(lg)
+	if err != nil {
+		return NewClientError(err)
+	}
+
+	var out []byte
+	var h map[string]string
+	var outLen int
+	switch s.putLogCompressType {
+	case Compress_LZ4:
+		// Compresse body with lz4
+		out = make([]byte, lz4.CompressBlockBound(len(body)))
+		var hashTable [1 << 16]int
+		n, err := lz4.CompressBlock(body, out, hashTable[:])
+		if err != nil {
+			return NewClientError(err)
+		}
+		// copy incompressible data as lz4 format
+		if n == 0 {
+			n, _ = copyIncompressible(body, out)
+		}
+
+		h = map[string]string{
+			"x-log-compresstype": "lz4",
+			"x-log-bodyrawsize":  strconv.Itoa(len(body)),
+			"Content-Type":       "application/x-protobuf",
+		}
+		outLen = n
+		break
+	case Compress_None:
+		// no compress
+		out = body
+		h = map[string]string{
+			"x-log-bodyrawsize": strconv.Itoa(len(body)),
+			"Content-Type":      "application/x-protobuf",
+		}
+		outLen = len(out)
+	}
+
+	uri := fmt.Sprintf("/logstores/%v/shards/route?key=%v", s.Name, *hashKey)
 	r, err := request(s.project, "POST", uri, h, out[:outLen])
 	if err != nil {
 		return NewClientError(err)
@@ -335,7 +404,7 @@ func (s *LogStore) GetLogsBytes(shardID int, cursor, endCursor string,
 	out = make([]byte, bodyRawSize)
 	if bodyRawSize != 0 {
 		len := 0
-		if len, err = lz4.UncompressBlock(buf, out, 0); err != nil || len != bodyRawSize {
+		if len, err = lz4.UncompressBlock(buf, out); err != nil || len != bodyRawSize {
 			return
 		}
 	}

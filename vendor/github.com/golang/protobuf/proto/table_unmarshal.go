@@ -136,7 +136,7 @@ func (u *unmarshalInfo) unmarshal(m pointer, b []byte) error {
 		u.computeUnmarshalInfo()
 	}
 	if u.isMessageSet {
-		return unmarshalMessageSet(b, m.offset(u.extensions).toExtensions())
+		return UnmarshalMessageSet(b, m.offset(u.extensions).toExtensions())
 	}
 	var reqMask uint64 // bitmask of required fields we've seen.
 	var errLater error

@@ -61,8 +61,8 @@ type TccServer interface {
 	NewTx(ctx context.Context, parentTxid string) (string, error)
 	Commit(ctx context.Context, txid string) error
 	Cancel(ctx context.Context, txid string) error
-	BeforeRequire(ctx context.Context, txid string, GrpcRequireFullMethod string) (string, error)
-	AfterRequire(ctx context.Context, txid string, GrpcRequireFullMethod string, key string) error
+	BeforeRequire(ctx context.Context, GrpcRequireFullMethod string) (context.Context, error)
+	AfterRequire(ctx context.Context, GrpcRequireFullMethod string) error
 }
 
 // Agent .

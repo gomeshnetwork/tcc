@@ -9,6 +9,7 @@ import (
 	"github.com/bwmarrin/snowflake"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/dynamicgo/xerrors"
 
@@ -27,7 +28,6 @@ type agentImpl struct {
 	resources     map[string]*gomesh.TccResource // register local resources
 	snode         *snowflake.Node                // snode
 	backoff       time.Duration                  // attach backoff time
-	innerTxs      map[string]string              // inner txs
 }
 
 // New create new agent which implement gomesh.TccServer interface
@@ -40,7 +40,6 @@ func New() gomesh.TccServer {
 		resources: make(map[string]*gomesh.TccResource),
 		snode:     snode,
 		backoff:   config.Get("gomesh", "tcc", "backoff").Duration(time.Second * 10),
-		innerTxs:  make(map[string]string),
 	}
 }
 
@@ -138,25 +137,43 @@ func (agent *agentImpl) isTccResource(grpcRequireFullMethod string) bool {
 	return ok
 }
 
-func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequireFullMethod string) (string, error) {
+func (agent *agentImpl) saveResourceMetadata(ctx context.Context, rid string, localTx bool) context.Context {
+	newmd := metadata.Pairs("tcc_rid_key", rid, "tcc_localtx_key", fmt.Sprintf("%v", localTx))
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		md = metadata.New(nil)
+	} else {
+		md = md.Copy()
+	}
+
+	md = metadata.Join(md, newmd)
+
+	return metadata.NewIncomingContext(ctx, md)
+}
+
+func (agent *agentImpl) BeforeRequire(ctx context.Context, grpcRequireFullMethod string) (context.Context, error) {
 
 	if !agent.isTccResource(grpcRequireFullMethod) {
-		return "", nil
+		return ctx, nil
 	}
 
 	key := "R_" + agent.snode.Generate().String()
 
-	if txid == "" {
-		txid, err := agent.NewTx(ctx, txid)
+	txid, ok := gomesh.TccTxid(ctx)
 
+	if !ok {
+		session, err := gomesh.NewTcc(ctx)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
-		agent.Lock()
-		agent.innerTxs[key] = txid
-		agent.Unlock()
+		ctx = session.NewIncomingContext()
+
+		txid = session.Txid()
 	}
+
+	ctx = agent.saveResourceMetadata(ctx, key, !ok)
 
 	_, err := agent.engine.BeginLockResource(ctx, &tcc.BeginLockResourceRequest{
 		Txid:     txid,
@@ -167,24 +184,32 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, txid string, grpcRequ
 
 	if err != nil {
 		agent.ErrorF("create tcc session error: %s", err)
-		return "", err
+		return nil, err
 	}
 
-	return key, nil
+	return ctx, nil
 
 }
 
-func (agent *agentImpl) AfterRequire(ctx context.Context, txid string, grpcRequireFullMethod string, key string) error {
+func (agent *agentImpl) AfterRequire(ctx context.Context, grpcRequireFullMethod string) error {
 
 	if !agent.isTccResource(grpcRequireFullMethod) {
 		return nil
 	}
 
+	txid, _ := gomesh.TccTxid(ctx)
+
+	md, _ := metadata.FromIncomingContext(ctx)
+
+	rid := md.Get("tcc_rid_key")[0]
+
+	localTx := md.Get("tcc_localtx_key")[0]
+
 	_, err := agent.engine.EndLockResource(ctx, &tcc.EndLockResourceRequest{
 		Txid:     txid,
 		Agent:    agent.id,
 		Resource: grpcRequireFullMethod,
-		Rid:      key,
+		Rid:      rid,
 	})
 
 	if err != nil {
@@ -192,11 +217,7 @@ func (agent *agentImpl) AfterRequire(ctx context.Context, txid string, grpcRequi
 		return err
 	}
 
-	if txid == "" {
-		agent.Lock()
-		txid = agent.innerTxs[key]
-		agent.Unlock()
-
+	if localTx == "true" {
 		return agent.Commit(ctx, txid)
 	}
 
