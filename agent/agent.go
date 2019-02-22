@@ -155,6 +155,7 @@ func (agent *agentImpl) saveResourceMetadata(ctx context.Context, rid string, lo
 func (agent *agentImpl) BeforeRequire(ctx context.Context, grpcRequireFullMethod string) (context.Context, error) {
 
 	if !agent.isTccResource(grpcRequireFullMethod) {
+		agent.DebugF("[BeforeRequire] %s is not register resource api", grpcRequireFullMethod)
 		return ctx, nil
 	}
 
@@ -174,6 +175,10 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, grpcRequireFullMethod
 	}
 
 	ctx = agent.saveResourceMetadata(ctx, rid, !ok)
+
+	_, t := gomesh.TccTxid(ctx)
+
+	agent.DebugF("= ================== %s", t)
 
 	agent.DebugF("[local(%v)] before tcc resource %s require with rid %s", !ok, grpcRequireFullMethod, rid)
 
@@ -196,6 +201,7 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, grpcRequireFullMethod
 func (agent *agentImpl) AfterRequire(ctx context.Context, grpcRequireFullMethod string) error {
 
 	if !agent.isTccResource(grpcRequireFullMethod) {
+		agent.DebugF("[AfterRequire] %s is not register resource api", grpcRequireFullMethod)
 		return nil
 	}
 
