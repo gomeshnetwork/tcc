@@ -130,7 +130,7 @@ func Start(config config.Config) error {
 func GetTccServer() TccServer {
 	var tccServer TccServer
 
-	if injector.Get("mesh.tccServer", &tccServer) {
+	if !injector.Get("mesh.tccServer", &tccServer) {
 		err := xerrors.Wrapf(ErrAgent, "must import mesh.tcc_resource_manager implement package")
 		panic(err)
 	}

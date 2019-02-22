@@ -275,6 +275,8 @@ func (register *serviceRegister) UnaryServerInterceptor(
 		}
 	}
 
+	register.TraceF("call %s with request %s", info.FullMethod, req)
+
 	resp, err := handler(ctx, req)
 
 	if err != nil {

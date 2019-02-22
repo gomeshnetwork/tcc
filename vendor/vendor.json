@@ -258,16 +258,16 @@
 			"revisionTime": "2019-02-14T10:03:08Z"
 		},
 		{
-			"checksumSHA1": "uF41IzRUFuZ58ae+002ocmbfFw0=",
+			"checksumSHA1": "87vqubxvLyEcwo7CmyRVOQ6bSlQ=",
 			"path": "github.com/gomeshnetwork/gomesh",
-			"revision": "e3d170261956eb80a8b16c2a404d1e68211c0061",
-			"revisionTime": "2019-02-22T09:47:49Z"
+			"revision": "48db5a3f60321d55f9a0fe5ea18a6d5cc2edfd08",
+			"revisionTime": "2019-02-22T10:56:39Z"
 		},
 		{
 			"checksumSHA1": "Kc+xF5nM72uoWUUTi8aRSAP5KUE=",
 			"path": "github.com/gomeshnetwork/gomesh/app",
-			"revision": "e3d170261956eb80a8b16c2a404d1e68211c0061",
-			"revisionTime": "2019-02-22T09:47:49Z"
+			"revision": "48db5a3f60321d55f9a0fe5ea18a6d5cc2edfd08",
+			"revisionTime": "2019-02-22T10:56:39Z"
 		},
 		{
 			"checksumSHA1": "ZqEwha5gnqiPgKO1sCp6o9UMhM8=",
