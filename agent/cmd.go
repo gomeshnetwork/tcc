@@ -78,6 +78,8 @@ func (agent *agentImpl) attach() {
 			continue
 		}
 
+		agent.DebugF("attach tcc agent -- success")
+
 		go agent.cmdLoop(cmd)
 
 		break
