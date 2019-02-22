@@ -108,7 +108,7 @@ func (agent *agentImpl) Commit(ctx context.Context, txid string) error {
 	})
 
 	if err != nil {
-		agent.ErrorF("create tcc session error: %s", err)
+		agent.ErrorF("commit tcc session error: %s", err)
 		return err
 	}
 
@@ -175,10 +175,6 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, grpcRequireFullMethod
 	}
 
 	ctx = agent.saveResourceMetadata(ctx, rid, !ok)
-
-	_, t := gomesh.TccTxid(ctx)
-
-	agent.DebugF("= ================== %s", t)
 
 	agent.DebugF("[local(%v)] before tcc resource %s require with rid %s", !ok, grpcRequireFullMethod, rid)
 

@@ -53,7 +53,7 @@ func (storage *storageImpl) NewTx(tx *engine.Transaction) error {
 
 func (storage *storageImpl) UpdateTxStatus(id string, status tcc.TxStatus) (bool, error) {
 
-	c, err := storage.engine.Where(`"id" = ?`, id).Cols("status").Update(&engine.Transaction{Status: status})
+	c, err := storage.engine.Where(`"i_d" = ?`, id).Cols("status").Update(&engine.Transaction{Status: status})
 
 	if err != nil {
 		return false, xerrors.Wrapf(err, "update tx %s status to %s error", id, status)
