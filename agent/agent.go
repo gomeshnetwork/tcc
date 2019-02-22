@@ -176,7 +176,7 @@ func (agent *agentImpl) BeforeRequire(ctx context.Context, grpcRequireFullMethod
 		txid = session.Txid()
 	}
 
-	ctx = agent.saveResourceMetadata(ctx, rid, !ok)
+	ctx = gomesh.NewTccResourceIncomingContext(ctx, rid, !ok)
 
 	_, err := agent.engine.BeginLockResource(ctx, &tcc.BeginLockResourceRequest{
 		Txid:     txid,
@@ -205,11 +205,9 @@ func (agent *agentImpl) AfterRequire(ctx context.Context, grpcRequireFullMethod 
 
 	txid, _ := gomesh.TccTxid(ctx)
 
-	md, _ := metadata.FromIncomingContext(ctx)
+	rid, _ := gomesh.TccRid(ctx)
 
-	rid := md.Get("tcc_rid_key")[0]
-
-	localTx := md.Get("tcc_localtx_key")[0]
+	localTx := gomesh.TccLocalTx(ctx)
 
 	agent.DebugF("[local(%v)] after tcc resource %s require with rid %s", localTx, grpcRequireFullMethod, rid)
 
@@ -225,7 +223,7 @@ func (agent *agentImpl) AfterRequire(ctx context.Context, grpcRequireFullMethod 
 		return err
 	}
 
-	if localTx == "true" {
+	if localTx {
 		agent.DebugF("[local(%v)] after tcc resource %s require with rid %s -- completed", localTx, grpcRequireFullMethod, rid)
 		return agent.Commit(ctx, txid)
 	}

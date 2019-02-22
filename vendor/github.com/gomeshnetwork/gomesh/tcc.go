@@ -2,12 +2,15 @@ package gomesh
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/dynamicgo/xerrors"
 	"google.golang.org/grpc/metadata"
 )
 
 var txidkey = "gomesh_tcc_txid"
+var ridkey = "gomesh_tcc_rid"
+var localkey = "gomesh_tcc_local"
 
 // TccSession .
 type TccSession interface {
@@ -77,6 +80,38 @@ func NewTcc(ctx context.Context) (TccSession, error) {
 // TccTxid .
 func TccTxid(ctx context.Context) (string, bool) {
 	return TccTxMetadata(ctx, txidkey)
+}
+
+// TccRid .
+func TccRid(ctx context.Context) (string, bool) {
+	return TccTxMetadata(ctx, ridkey)
+}
+
+// TccLocalTx .
+func TccLocalTx(ctx context.Context) bool {
+	status, ok := TccTxMetadata(ctx, ridkey)
+
+	if ok && status == "true" {
+		return true
+	}
+
+	return false
+}
+
+// NewTccResourceIncomingContext .
+func NewTccResourceIncomingContext(ctx context.Context, rid string, localTx bool) context.Context {
+	newmd := metadata.Pairs(ridkey, rid, localkey, fmt.Sprintf("%v", localTx))
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		md = metadata.New(nil)
+	} else {
+		md = md.Copy()
+	}
+
+	md = metadata.Join(md, newmd)
+
+	return metadata.NewIncomingContext(ctx, md)
 }
 
 // TccTxMetadata .
