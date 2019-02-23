@@ -115,7 +115,7 @@ func (storage *storageImpl) UpdateResourcesStatus(txid, agent, resource string, 
 	return nil
 }
 
-var queryNotifyTxSQL = `SELECT * FROM tcc_engine_transaction WHERE i_d in (SELECT DISTINCT("tx") from (SELECT "tx" FROM tcc_engine_resource WHERE agent = ? and status = 1 ORDER BY i_d DESC LIMIT ?) as s);
+var queryNotifyTxSQL = `SELECT * FROM tcc_engine_transaction WHERE i_d in (SELECT DISTINCT("tx") from (SELECT "tx" FROM tcc_engine_resource WHERE agent = ? and status = 0 ORDER BY i_d DESC LIMIT ?) as s);
 `
 
 func (storage *storageImpl) QueryNotifyTx(agent string) ([]*engine.Transaction, error) {
