@@ -54,6 +54,7 @@ func (agent *agentImpl) handleCmd(request *tcc.AgentCommandRequest) {
 		Txid:     request.Txid,
 		Resource: request.Resource,
 		Status:   status,
+		Agent:    agent.id,
 	})
 
 	if err != nil {
