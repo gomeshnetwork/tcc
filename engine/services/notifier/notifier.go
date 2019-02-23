@@ -3,6 +3,7 @@ package notifier
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	config "github.com/dynamicgo/go-config"
 	"github.com/dynamicgo/slf4go"
@@ -24,6 +25,7 @@ type notifierImpl struct {
 	agents        map[string]*agentServer
 	cachesize     int
 	Storage       engine.Storage `inject:"tcc.Storage"`
+	reloadTimeout time.Duration
 }
 
 // New .
@@ -32,10 +34,16 @@ func New(config config.Config) (engine.Notifier, error) {
 	cachesize := config.Get("cached").Int(1024)
 
 	return &notifierImpl{
-		Logger:    slf4go.Get("notifier"),
-		agents:    make(map[string]*agentServer),
-		cachesize: cachesize,
+		Logger:        slf4go.Get("notifier"),
+		agents:        make(map[string]*agentServer),
+		cachesize:     cachesize,
+		reloadTimeout: config.Get("reload").Duration(time.Minute),
 	}, nil
+}
+
+func (notifier *notifierImpl) Start() error {
+	go notifier.reload()
+	return nil
 }
 
 func (notifier *notifierImpl) CommitTx(id string) {
@@ -60,9 +68,6 @@ func (notifier *notifierImpl) send(id string, commit bool) {
 		return
 	}
 
-	notifier.RLock()
-	defer notifier.RUnlock()
-
 	filters := make(map[string]*engine.Resource)
 
 	for _, resource := range resources {
@@ -70,7 +75,9 @@ func (notifier *notifierImpl) send(id string, commit bool) {
 	}
 
 	for _, resource := range filters {
+		notifier.RLock()
 		agent, ok := notifier.agents[resource.Agent]
+		notifier.RUnlock()
 
 		if !ok {
 			notifier.WarnF("commit(%s) tx %s resource(%s,%s) to agent %s -- skipped, the agent not register",

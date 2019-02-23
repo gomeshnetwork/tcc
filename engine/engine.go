@@ -45,6 +45,7 @@ type Storage interface {
 	UpdateResourceStatus(txid, agent, resource, rid string, status tcc.TxStatus) error
 	UpdateResourcesStatus(txid, agent, resource string, status tcc.TxStatus) error
 	GetResourceByTx(id string) ([]*Resource, error)
+	QueryNotifyTx(agent string) ([]*Transaction, error)
 }
 
 // Notifier .
