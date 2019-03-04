@@ -75,6 +75,7 @@ func (notifier *notifierImpl) send(id string, commit bool) {
 	}
 
 	for _, resource := range filters {
+
 		notifier.RLock()
 		agent, ok := notifier.agents[resource.Agent]
 		notifier.RUnlock()
@@ -91,6 +92,22 @@ func (notifier *notifierImpl) send(id string, commit bool) {
 		} else {
 			agent.cancel <- resource
 		}
+
+	}
+}
+
+func (notifier *notifierImpl) doSend(resource *engine.Resource, agent *agentServer, commit bool) {
+
+	defer func() {
+		if recover() != nil {
+			notifier.ErrorF("checked closed chan for agent %s(%p) loop", agent.agent, agent)
+		}
+	}()
+
+	if commit {
+		agent.commit <- resource
+	} else {
+		agent.cancel <- resource
 	}
 }
 
@@ -103,6 +120,10 @@ func (notifier *notifierImpl) RunAgent(agent string, server tcc.Engine_AttachAge
 	}
 
 	notifier.Lock()
+	if old, ok := notifier.agents[agent]; ok {
+		close(old.cancel)
+		close(old.commit)
+	}
 	notifier.agents[agent] = as
 	notifier.Unlock()
 
@@ -113,6 +134,8 @@ func (notifier *notifierImpl) RunAgent(agent string, server tcc.Engine_AttachAge
 func (notifier *notifierImpl) doAgentLoop(as *agentServer) {
 	for {
 
+		notifier.InfoF("start agent %s(%p) loop", as.agent, as)
+
 		cmd := &tcc.AgentCommandRequest{}
 
 		var ok bool
@@ -121,6 +144,7 @@ func (notifier *notifierImpl) doAgentLoop(as *agentServer) {
 		select {
 		case resource, ok = <-as.commit:
 			if !ok {
+				notifier.InfoF("exit agent %s(%p) loop", as.agent, as)
 				return
 			}
 
@@ -128,6 +152,7 @@ func (notifier *notifierImpl) doAgentLoop(as *agentServer) {
 
 		case resource, ok = <-as.cancel:
 			if !ok {
+				notifier.InfoF("exit agent %s(%p) loop", as.agent, as)
 				return
 			}
 
@@ -150,8 +175,10 @@ func (notifier *notifierImpl) closeAgentServer(as *agentServer) {
 	notifier.Lock()
 	defer notifier.Unlock()
 
-	delete(notifier.agents, as.agent)
-	close(as.cancel)
-	close(as.commit)
+	if notifier.agents[as.agent] == as {
+		delete(notifier.agents, as.agent)
+		close(as.cancel)
+		close(as.commit)
+	}
 
 }
