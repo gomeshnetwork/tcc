@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/dynamicgo/slf4go"
+
 	"github.com/dynamicgo/xerrors"
 	"google.golang.org/grpc/metadata"
 )
@@ -19,12 +21,15 @@ type TccSession interface {
 	NewIncomingContext() context.Context
 	Commit() error
 	Cancel() error
+	LocalCall(resourceName string, f func() error) error
 }
 
 type sessionImpl struct {
+	slf4go.Logger
 	txid      string
 	tccServer TccServer
 	ctx       context.Context
+	inCtx     context.Context
 }
 
 func (session *sessionImpl) Txid() string {
@@ -49,6 +54,43 @@ func (session *sessionImpl) NewIncomingContext() context.Context {
 	return metadata.NewIncomingContext(session.ctx, md)
 }
 
+func (session *sessionImpl) LocalCall(resourceName string, f func() error) error {
+
+	ctx := session.inCtx
+
+	if ctx == nil {
+		ctx = session.NewIncomingContext()
+		session.inCtx = ctx
+	}
+
+	tccServer := GetTccServer()
+
+	if tccServer != nil {
+		var err error
+		ctx, err = tccServer.BeforeRequire(ctx, resourceName)
+
+		if err != nil {
+			return xerrors.Wrapf(err, "tcc resource %s before lock err", resourceName)
+		}
+	}
+
+	err := f()
+
+	if err != nil {
+		return xerrors.Wrapf(err, "tcc resource %s lock err", resourceName)
+	}
+
+	if tccServer != nil {
+		err := tccServer.AfterRequire(ctx, resourceName)
+
+		if err != nil {
+			return xerrors.Wrapf(err, "tcc resource %s after lock err", resourceName)
+		}
+	}
+
+	return nil
+}
+
 // NewTcc .
 func NewTcc(ctx context.Context) (TccSession, error) {
 
@@ -69,6 +111,7 @@ func NewTcc(ctx context.Context) (TccSession, error) {
 	md := metadata.Pairs(txidkey, txid)
 
 	session := &sessionImpl{
+		Logger:    slf4go.Get("tcc"),
 		txid:      txid,
 		tccServer: tccServer,
 		ctx:       metadata.NewOutgoingContext(ctx, md),
