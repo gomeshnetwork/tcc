@@ -103,11 +103,6 @@ func (notifier *notifierImpl) RunAgent(agent string, server tcc.Engine_AttachAge
 	}
 
 	notifier.Lock()
-	if _, ok := notifier.agents[agent]; ok {
-		notifier.WarnF("exists agent %s", agent)
-		notifier.Unlock()
-		return
-	}
 	notifier.agents[agent] = as
 	notifier.Unlock()
 
