@@ -43,6 +43,10 @@ func (notifier *notifierImpl) doReload(agent string) {
 		if tx.Status == tcc.TxStatus_Canceled {
 			notifier.send(tx.ID, false)
 		}
+
+		if time.Now().Sub(tx.CreatedTime) > notifier.sessionTimeout {
+			notifier.send(tx.ID, false)
+		}
 	}
 }
 

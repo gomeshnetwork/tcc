@@ -20,12 +20,13 @@ type agentServer struct {
 }
 
 type notifierImpl struct {
-	sync.RWMutex  // mxin rw locker
-	slf4go.Logger // logger
-	agents        map[string]*agentServer
-	cachesize     int
-	Storage       engine.Storage `inject:"tcc.Storage"`
-	reloadTimeout time.Duration
+	sync.RWMutex   // mxin rw locker
+	slf4go.Logger  // logger
+	agents         map[string]*agentServer
+	cachesize      int
+	Storage        engine.Storage `inject:"tcc.Storage"`
+	reloadTimeout  time.Duration
+	sessionTimeout time.Duration
 }
 
 // New .
@@ -34,10 +35,11 @@ func New(config config.Config) (engine.Notifier, error) {
 	cachesize := config.Get("cached").Int(1024)
 
 	return &notifierImpl{
-		Logger:        slf4go.Get("notifier"),
-		agents:        make(map[string]*agentServer),
-		cachesize:     cachesize,
-		reloadTimeout: config.Get("reload").Duration(time.Minute),
+		Logger:         slf4go.Get("notifier"),
+		agents:         make(map[string]*agentServer),
+		cachesize:      cachesize,
+		reloadTimeout:  config.Get("reload").Duration(time.Minute),
+		sessionTimeout: config.Get("timeout").Duration(time.Minute * 10),
 	}, nil
 }
 
@@ -87,11 +89,7 @@ func (notifier *notifierImpl) send(id string, commit bool) {
 			continue
 		}
 
-		if commit {
-			agent.commit <- resource
-		} else {
-			agent.cancel <- resource
-		}
+		notifier.doSend(resource, agent, commit)
 
 	}
 }
