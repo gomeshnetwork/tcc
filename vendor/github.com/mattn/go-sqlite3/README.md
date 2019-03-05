@@ -11,10 +11,9 @@ go-sqlite3
 sqlite3 driver conforming to the built-in database/sql interface
 
 Supported Golang version:
+- 1.8.x
 - 1.9.x
 - 1.10.x
-
-[This package follows the official Golang Release Policy.](https://golang.org/doc/devel/release.html#policy)
 
 ### Overview
 
@@ -37,6 +36,7 @@ Supported Golang version:
 - [User Authentication](#user-authentication)
   - [Compile](#compile)
   - [Usage](#usage)
+  - 
 - [Extensions](#extensions)
   - [Spatialite](#spatialite)
 - [FAQ](#faq)
@@ -453,19 +453,14 @@ For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatial
 
     Yes for readonly. But, No for writable. See [#50](https://github.com/mattn/go-sqlite3/issues/50), [#51](https://github.com/mattn/go-sqlite3/issues/51), [#209](https://github.com/mattn/go-sqlite3/issues/209), [#274](https://github.com/mattn/go-sqlite3/issues/274).
 
-- Why I'm getting `no such table` error?
-
-    Why is it racy if I use a `sql.Open("sqlite3", ":memory:")` database?
+- Why is it racy if I use a `sql.Open("sqlite3", ":memory:")` database?
 
     Each connection to :memory: opens a brand new in-memory sql database, so if
     the stdlib's sql engine happens to open another connection and you've only
     specified ":memory:", that connection will see a brand new database. A
     workaround is to use "file::memory:?mode=memory&cache=shared". Every
-    connection to this string will point to the same in-memory database. 
-    
-    For more information see
-    * [#204](https://github.com/mattn/go-sqlite3/issues/204)
-    * [#511](https://github.com/mattn/go-sqlite3/issues/511)
+    connection to this string will point to the same in-memory database. See
+    [#204](https://github.com/mattn/go-sqlite3/issues/204) for more info.
 
 - Reading from database with large amount of goroutines fails on OSX.
 
@@ -473,7 +468,7 @@ For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatial
 
     For more information see [#289](https://github.com/mattn/go-sqlite3/issues/289)
 
-- Trying to execute a `.` (dot) command throws an error.
+- Trying to execure a `.` (dot) command throws an error.
 
     Error: `Error: near ".": syntax error`
     Dot command are part of SQLite3 CLI not of this library.
@@ -481,25 +476,6 @@ For an example see [shaxbee/go-spatialite](https://github.com/shaxbee/go-spatial
     You need to implement the feature or call the sqlite3 cli.
 
     More infomation see [#305](https://github.com/mattn/go-sqlite3/issues/305)
-
-- Error: `database is locked`
-
-    When you get an database is locked. Please use the following options.
-
-    Add to DSN: `cache=shared`
-
-    Example:
-    ```go
-    db, err := sql.Open("sqlite3", "file:locked.sqlite?cache=shared")
-    ```
-
-    Second please set the database connections of the SQL package to 1.
-    
-    ```go
-    db.SetMaxOpenConn(1)
-    ```
-
-    More information see [#209](https://github.com/mattn/go-sqlite3/issues/209)
 
 # License
 

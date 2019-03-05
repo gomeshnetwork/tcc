@@ -17,7 +17,17 @@ import (
 
 func (session *Session) genQuerySQL(sqlorArgs ...interface{}) (string, []interface{}, error) {
 	if len(sqlorArgs) > 0 {
-		return convertSQLOrArgs(sqlorArgs...)
+		switch sqlorArgs[0].(type) {
+		case string:
+			return sqlorArgs[0].(string), sqlorArgs[1:], nil
+		case *builder.Builder:
+			return sqlorArgs[0].(*builder.Builder).ToSQL()
+		case builder.Builder:
+			bd := sqlorArgs[0].(builder.Builder)
+			return bd.ToSQL()
+		default:
+			return "", nil, ErrUnSupportedType
+		}
 	}
 
 	if session.statement.RawSQL != "" {
@@ -35,7 +45,7 @@ func (session *Session) genQuerySQL(sqlorArgs ...interface{}) (string, []interfa
 		if session.statement.JoinStr == "" {
 			if columnStr == "" {
 				if session.statement.GroupByStr != "" {
-					columnStr = session.engine.quoteColumns(session.statement.GroupByStr)
+					columnStr = session.statement.Engine.Quote(strings.Replace(session.statement.GroupByStr, ",", session.engine.Quote(","), -1))
 				} else {
 					columnStr = session.statement.genColumnStr()
 				}
@@ -43,7 +53,7 @@ func (session *Session) genQuerySQL(sqlorArgs ...interface{}) (string, []interfa
 		} else {
 			if columnStr == "" {
 				if session.statement.GroupByStr != "" {
-					columnStr = session.engine.quoteColumns(session.statement.GroupByStr)
+					columnStr = session.statement.Engine.Quote(strings.Replace(session.statement.GroupByStr, ",", session.engine.Quote(","), -1))
 				} else {
 					columnStr = "*"
 				}

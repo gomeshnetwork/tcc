@@ -443,7 +443,7 @@ func (session *Session) genUpdateColumns(bean interface{}) ([]string, []interfac
 			}
 		}
 
-		if (col.IsDeleted && !session.statement.unscoped) || col.IsCreated {
+		if col.IsDeleted || col.IsCreated {
 			continue
 		}
 

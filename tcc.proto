@@ -6,10 +6,10 @@ option go_package = "github.com/gomeshnetwork/tcc";
 
 enum TxStatus {
   Created = 0;
-  Confirmed = 1;
-  Canceled = 2;
-  Timeout = 3;
-  Locked = 4;
+  Locked = 1;
+  Confirmed = 2;
+  Canceled = 3;
+  Timeout = 4;
 }
 
 message NewTxRequest {

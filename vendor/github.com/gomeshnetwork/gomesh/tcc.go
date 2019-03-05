@@ -132,7 +132,7 @@ func TccRid(ctx context.Context) (string, bool) {
 
 // TccLocalTx .
 func TccLocalTx(ctx context.Context) bool {
-	status, ok := TccTxMetadata(ctx, ridkey)
+	status, ok := TccTxMetadata(ctx, localkey)
 
 	if ok && status == "true" {
 		return true

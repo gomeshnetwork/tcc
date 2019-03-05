@@ -108,7 +108,7 @@ func (scheduler *schedulerImpl) BeginLockResource(ctx context.Context, request *
 func (scheduler *schedulerImpl) EndLockResource(ctx context.Context, request *tcc.EndLockResourceRequest) (*tcc.EndLockResourceRespose, error) {
 
 	if err := scheduler.Storage.
-		UpdateResourceStatus(request.Txid, request.Rid, request.Agent, request.Resource, tcc.TxStatus_Confirmed); err != nil {
+		UpdateResourceStatus(request.Txid, request.Rid, request.Agent, request.Resource, tcc.TxStatus_Locked); err != nil {
 		return nil, err
 	}
 
