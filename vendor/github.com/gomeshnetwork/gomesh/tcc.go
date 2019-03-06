@@ -30,6 +30,7 @@ type sessionImpl struct {
 	tccServer TccServer
 	ctx       context.Context
 	inCtx     context.Context
+	linked    bool
 }
 
 func (session *sessionImpl) Txid() string {
@@ -41,11 +42,19 @@ func (session *sessionImpl) Context() context.Context {
 }
 
 func (session *sessionImpl) Commit() error {
-	return session.tccServer.Commit(session.ctx, session.txid)
+	if !session.linked {
+		return session.tccServer.Commit(session.ctx, session.txid)
+	}
+
+	return nil
 }
 
 func (session *sessionImpl) Cancel() error {
-	return session.tccServer.Cancel(session.ctx, session.txid)
+	if !session.linked {
+		return session.tccServer.Cancel(session.ctx, session.txid)
+	}
+
+	return nil
 }
 
 func (session *sessionImpl) NewIncomingContext() context.Context {
@@ -100,12 +109,15 @@ func NewTcc(ctx context.Context) (TccSession, error) {
 		return nil, xerrors.New("tccServer not register")
 	}
 
-	parentTxid, _ := TccTxid(ctx)
+	txid, ok := TccTxid(ctx)
 
-	txid, err := tccServer.NewTx(ctx, parentTxid)
+	if !ok {
+		var err error
+		txid, err = tccServer.NewTx(ctx, "")
 
-	if err != nil {
-		return nil, err
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	md := metadata.Pairs(txidkey, txid)
@@ -115,6 +127,7 @@ func NewTcc(ctx context.Context) (TccSession, error) {
 		txid:      txid,
 		tccServer: tccServer,
 		ctx:       metadata.NewOutgoingContext(ctx, md),
+		linked:    ok,
 	}
 
 	return session, nil
