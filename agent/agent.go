@@ -108,9 +108,11 @@ func (agent *agentImpl) Commit(ctx context.Context, txid string) error {
 	})
 
 	if err != nil {
-		agent.ErrorF("commit tcc session error: %s", err)
+		agent.ErrorF("commit tcc %s session error: %s", txid, err)
 		return err
 	}
+
+	agent.InfoF("commit tcc %s session -- success", txid)
 
 	return nil
 }
@@ -124,6 +126,8 @@ func (agent *agentImpl) Cancel(ctx context.Context, txid string) error {
 		agent.ErrorF("create tcc session error: %s", err)
 		return err
 	}
+
+	agent.InfoF("cancel tcc %s session -- success", txid)
 
 	return nil
 }
@@ -224,7 +228,7 @@ func (agent *agentImpl) AfterRequire(ctx context.Context, grpcRequireFullMethod 
 	}
 
 	if localTx {
-		agent.DebugF("[local(%v)] after tcc resource %s require with rid %s -- completed", localTx, grpcRequireFullMethod, rid)
+		agent.DebugF("[local(%v)] after tcc resource %s require with rid %s -- completed,commit", localTx, grpcRequireFullMethod, rid)
 		return agent.Commit(ctx, txid)
 	}
 
