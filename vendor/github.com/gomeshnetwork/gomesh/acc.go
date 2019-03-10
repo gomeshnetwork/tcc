@@ -9,7 +9,7 @@ import (
 
 // AccessCtrl .
 type AccessCtrl interface {
-	Handle(ctx context.Context, method string) error
+	Handle(ctx context.Context, method string) (context.Context, error)
 	Start(config config.Config) error
 }
 

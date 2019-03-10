@@ -258,16 +258,16 @@
 			"revisionTime": "2019-02-14T10:03:08Z"
 		},
 		{
-			"checksumSHA1": "d01GiGEUQKOZm+pByFUT4h/6MQ8=",
+			"checksumSHA1": "SpOoxjMXpP239naPevkIQ4pKI7o=",
 			"path": "github.com/gomeshnetwork/gomesh",
-			"revision": "878d014fbd7d2fdd9caa45b4899e603dd5f26421",
-			"revisionTime": "2019-03-10T08:14:47Z"
+			"revision": "f126bf77525f6b09dbec01554d08457159d9d25b",
+			"revisionTime": "2019-03-10T13:38:27Z"
 		},
 		{
 			"checksumSHA1": "Kc+xF5nM72uoWUUTi8aRSAP5KUE=",
 			"path": "github.com/gomeshnetwork/gomesh/app",
-			"revision": "878d014fbd7d2fdd9caa45b4899e603dd5f26421",
-			"revisionTime": "2019-03-10T08:14:47Z"
+			"revision": "f126bf77525f6b09dbec01554d08457159d9d25b",
+			"revisionTime": "2019-03-10T13:38:27Z"
 		},
 		{
 			"checksumSHA1": "ZqEwha5gnqiPgKO1sCp6o9UMhM8=",
@@ -336,7 +336,7 @@
 			"revisionTime": "2018-08-23T06:29:44Z"
 		},
 		{
-			"checksumSHA1": "ATnwV0POluBNQEMjPdylodz0oK0=",
+			"checksumSHA1": "AU3fA8Sm33Vj9PBoRPSeYfxLRuE=",
 			"path": "github.com/lib/pq/oid",
 			"revision": "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79",
 			"revisionTime": "2018-08-23T06:29:44Z"
@@ -424,7 +424,7 @@
 			"revisionTime": "2018-09-06T07:10:30Z"
 		},
 		{
-			"checksumSHA1": "kukg3DZezN5mPBAaWGUa4bCZCVo=",
+			"checksumSHA1": "X3BNLRx0XKxhjhk/TFP7KxkU+V8=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "b90733256f2e882e81d52f9126de08df5615afd9",
 			"revisionTime": "2019-01-23T07:55:40Z"
@@ -442,13 +442,13 @@
 			"revisionTime": "2018-10-29T17:29:39Z"
 		},
 		{
-			"checksumSHA1": "kRHVIuePi38RXAJmksH3MfQzTJI=",
+			"checksumSHA1": "qjFbU4RWY+Caxaa5/TlMJW82E+A=",
 			"path": "golang.org/x/text/unicode/bidi",
 			"revision": "462c4771caf3e8fb48d40f4cb96ecdca705e68fa",
 			"revisionTime": "2018-10-29T17:29:39Z"
 		},
 		{
-			"checksumSHA1": "8sOHRHq0IDNEG2doRGpA5FhqT10=",
+			"checksumSHA1": "Gp5AynJ5X6d8Gp8RQZCG3IkjuD4=",
 			"path": "golang.org/x/text/unicode/norm",
 			"revision": "462c4771caf3e8fb48d40f4cb96ecdca705e68fa",
 			"revisionTime": "2018-10-29T17:29:39Z"

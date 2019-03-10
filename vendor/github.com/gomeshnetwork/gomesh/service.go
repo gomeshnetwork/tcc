@@ -291,7 +291,8 @@ func (register *serviceRegister) UnaryServerInterceptor(
 	ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 
 	if register.accessCtrl != nil {
-		err := register.accessCtrl.Handle(ctx, info.FullMethod)
+		var err error
+		ctx, err = register.accessCtrl.Handle(ctx, info.FullMethod)
 
 		if err != nil {
 			register.ErrorF("access ctrl return error for method %s\n\t%s", info.FullMethod, err)
