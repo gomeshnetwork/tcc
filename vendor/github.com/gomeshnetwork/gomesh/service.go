@@ -24,7 +24,7 @@ type RemoteF func(conn *grpc.ClientConn) (Service, error)
 type Register interface {
 	LocalService(name string, F F)
 	RemoteService(name string, F RemoteF)
-	Start(agent Agent, tccServer TccServer) error
+	Start(config config.Config) error
 }
 
 type serviceF struct {
@@ -48,6 +48,7 @@ type serviceRegister struct {
 	runnables       []RunnableService // runnable services
 	runnableNames   []string          // runnable service names
 	tccServer       TccServer         // tcc resource manager
+	accessCtrl      AccessCtrl        // access ctrl server
 
 }
 
@@ -128,9 +129,34 @@ func (register *serviceRegister) bindRemoteServices(agent Agent) error {
 	return nil
 }
 
-func (register *serviceRegister) Start(agent Agent, tccServer TccServer) error {
+func (register *serviceRegister) Start(config config.Config) error {
+
+	var agent Agent
+	var tccServer TccServer
+	var accessCtrl AccessCtrl
+
+	if !injector.Get("mesh.agent", &agent) {
+		return xerrors.Wrapf(ErrAgent, "must import mesh.agent implement package")
+	}
+
+	if err := agent.Start(config); err != nil {
+		return err
+	}
+
+	if injector.Get("mesh.tccServer", &tccServer) {
+		if err := tccServer.Start(config); err != nil {
+			return err
+		}
+	}
+
+	if injector.Get("mesh.accessctrl", &accessCtrl) {
+		if err := accessCtrl.Start(config); err != nil {
+			return err
+		}
+	}
 
 	register.tccServer = tccServer
+	register.accessCtrl = accessCtrl
 
 	register.RLock()
 	defer register.RUnlock()
@@ -263,6 +289,16 @@ func (register *serviceRegister) startGrpcServices(agent Agent, grpcServiceNames
 
 func (register *serviceRegister) UnaryServerInterceptor(
 	ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+
+	if register.accessCtrl != nil {
+		err := register.accessCtrl.Handle(ctx, info.FullMethod)
+
+		if err != nil {
+			register.ErrorF("access ctrl return error for method %s\n\t%s", info.FullMethod, err)
+			err = apierr.AsGrpcError(apierr.As(err, apierr.New(-1, "UNKNOWN")))
+			return nil, err
+		}
+	}
 
 	if register.tccServer != nil {
 		var err error

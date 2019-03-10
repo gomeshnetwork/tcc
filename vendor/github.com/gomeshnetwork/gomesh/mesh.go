@@ -106,24 +106,7 @@ func RemoteService(name string, F RemoteF) {
 
 // Start start gomesh
 func Start(config config.Config) error {
-	var agent Agent
-	var tccServer TccServer
-
-	if !injector.Get("mesh.agent", &agent) {
-		return xerrors.Wrapf(ErrAgent, "must import mesh.agent implement package")
-	}
-
-	if err := agent.Start(config); err != nil {
-		return err
-	}
-
-	if injector.Get("mesh.tccServer", &tccServer) {
-		if err := tccServer.Start(config); err != nil {
-			return err
-		}
-	}
-
-	return getServiceRegister().Start(agent, tccServer)
+	return getServiceRegister().Start(config)
 }
 
 // GetTccServer .

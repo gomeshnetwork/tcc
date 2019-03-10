@@ -21,7 +21,7 @@ type TccSession interface {
 	NewIncomingContext() context.Context
 	Commit() error
 	Cancel() error
-	LocalCall(resourceName string, f func() error) error
+	LocalCall(resourceName string, f func(ctx context.Context) error) error
 }
 
 type sessionImpl struct {
@@ -63,7 +63,7 @@ func (session *sessionImpl) NewIncomingContext() context.Context {
 	return metadata.NewIncomingContext(session.ctx, md)
 }
 
-func (session *sessionImpl) LocalCall(resourceName string, f func() error) error {
+func (session *sessionImpl) LocalCall(resourceName string, f func(ctx context.Context) error) error {
 
 	ctx := session.inCtx
 
@@ -83,7 +83,7 @@ func (session *sessionImpl) LocalCall(resourceName string, f func() error) error
 		}
 	}
 
-	err := f()
+	err := f(ctx)
 
 	if err != nil {
 		return xerrors.Wrapf(err, "tcc resource %s lock err", resourceName)
